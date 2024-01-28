@@ -1,0 +1,13 @@
+{
+	"fmt": {
+		"semiColons": false,
+		"lineWidth": 100,
+		"useTabs": true,
+		"proseWrap": "never"
+	},
+	"compilerOptions": {
+		"allowJs": true,
+		"lib": ["deno.window", "dom", "dom.iterable"],
+		"exactOptionalPropertyTypes": true
+	}
+}
