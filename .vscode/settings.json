@@ -1,9 +1,13 @@
 {
-  "deno.enable": true,
-  "deno.lint": true,
-  "deno.unstable": true,
-  "deno.config": "./deno.jsonc",
-  "[json][jsonc][markdown][javascript][typescript][typescriptreact]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  }
+	"deno.enable": true,
+	"deno.lint": true,
+	"deno.unstable": true,
+	"deno.config": "./deno.jsonc",
+	"[json][jsonc][markdown][javascript][typescript][typescriptreact]": {
+		"editor.defaultFormatter": "denoland.vscode-deno"
+	},
+	"[javascript]": {
+		"editor.defaultFormatter": "denoland.vscode-deno",
+		"editor.formatOnSave": true
+	}
 }
