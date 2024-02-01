@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.0.2
+// @version      0.0.4
 // @description  제목별 태그 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
+// @match        https://m.dcinside.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=github.com
 // @homepageURL  https://github.com/scarf005/userscript
 // @supportURL   https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc
@@ -31,8 +32,9 @@
         [data-label="밝밤"] { --label-color: rgb(21, 152, 24); }
         [data-label="dda"] { --label-color: #1c4f3c; }
         [data-label="coq"] { --label-color: #6fa698; }
-        [data-label="엘린"] { --label-color: #d6651a; }
+        [data-label="엘린"] { --label-color: #f5ab7a; }
         [data-label="엘로나"] { --label-color: #d6651a; }
+        [data-label="드포"] { --label-color: #f5bf36; }
     `)
 
 	/** @type {(r: RegExp) => RegExp} */
@@ -44,13 +46,14 @@
 	const dda = re(/(?:카타클|ㅋㅌㅋ)?\s*(?:어둠밤|dda)/)
 	const coq = re(/(?:coq|caves of qud|qud)/)
 	const 엘린 = re(/엘린/)
-	const 엘로나 = re(/엘로나/)
+	const 엘로나 = re(/엘로나\+?/)
+    const 드포 = re(/(?:ㄷㅍ|드포)/)
 
-	const tags = { 돌죽, 톰죽, 밝밤, dda, coq, 엘린, 엘로나 }
+	const tags = { 돌죽, 톰죽, 밝밤, dda, coq, 엘린, 엘로나, 드포 }
 
 	const tag = () =>
 		Array
-			.from(document.querySelectorAll("tr.us-post td.gall_tit a:first-child:has(em)"))
+			.from(document.querySelectorAll("tr.us-post td.gall_tit a:first-child:has(em),.subjectin"))
 			.forEach((el) => {
 				const key = Object.entries(tags).find(([, tag]) => tag.test(el.innerText))?.[0]
 				if (!key) return
@@ -61,9 +64,12 @@
                 `
 			})
 
-	const tbody = document.querySelector("tbody")
-	const observer = new MutationObserver(tag)
+    tag()
 
-	tag()
-	observer.observe(tbody, { childList: true })
+	const tbody = document.querySelector("tbody")
+    if (tbody) {
+	    const observer = new MutationObserver(tag)
+
+	    observer.observe(tbody, { childList: true })
+    }
 }
