@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.0.3
+// @version      0.0.4
 // @description  제목별 태그 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
+// @match        https://m.dcinside.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=github.com
 // @homepageURL  https://github.com/scarf005/userscript
 // @supportURL   https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc
@@ -52,7 +53,7 @@
 
 	const tag = () =>
 		Array
-			.from(document.querySelectorAll("tr.us-post td.gall_tit a:first-child:has(em)"))
+			.from(document.querySelectorAll("tr.us-post td.gall_tit a:first-child:has(em),.subjectin"))
 			.forEach((el) => {
 				const key = Object.entries(tags).find(([, tag]) => tag.test(el.innerText))?.[0]
 				if (!key) return
@@ -63,9 +64,12 @@
                 `
 			})
 
-	const tbody = document.querySelector("tbody")
-	const observer = new MutationObserver(tag)
+    tag()
 
-	tag()
-	observer.observe(tbody, { childList: true })
+	const tbody = document.querySelector("tbody")
+    if (tbody) {
+	    const observer = new MutationObserver(tag)
+
+	    observer.observe(tbody, { childList: true })
+    }
 }
