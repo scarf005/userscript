@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.0.4
+// @version      0.1.0
 // @description  제목별 태그 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
@@ -25,6 +25,14 @@
 	/** @type {(r: RegExp) => RegExp} */
 	const reTag = (r) => new RegExp(`^(${r.source}\\s*\\)?\\s*)`, "i")
 
+	/** @type {(html: string) => Element} */
+	const fromHTML = (html) => {
+		const template = document.createElement("template")
+
+		template.innerHTML = html
+		return template.content.children[0]
+	}
+
 	/** @type {Record<string, { re: RegExp, color: string }>} */
 	const tags = mapValues({
 		돌죽: { re: /(?:돌죽|ㄷㅈ)/, color: "#63200b" },
@@ -42,17 +50,115 @@
 		.join("\n")
 
 	GM_addStyle(/*css*/ `
-        span[data-label] {
+        :root { --label-color: black; }
+        ${colors}
+
+        legend,
+        span[data-label],
+        input[type="radio"]+label {
+            font-size: var(--label-size);
+            line-height: var(--label-size);
+        }
+
+        span[data-label],
+        input[type="radio"]+label {
             color: white;
             display: inline-block;
             font-weight: bold;
             padding: 0.1em 0.5em;
             border-radius: 2em;
+        }
+
+        span[data-label] {
+            --label-size: 1em;
             background-color: var(--label-color);
         }
 
-        ${colors}
+        legend,
+        input[type="radio"]+label { --label-size: 1.2em; }
+
+        input[type="radio"] { display: none; }
+        input[type="radio"]+label { background-color: gray; }
+        input[type="radio"]:checked+label { background-color: var(--label-color); }
+
+        fieldset#말머리 {
+            display: flex;
+            align-items: center;
+            gap: 0.2em;
+        }
+
+        legend {
+            float: left;
+            padding: 0.5em 1em;
+            font-weight: bold;
+            background-color: #eee;
+        }
+
+        @media (width > 768px) {
+            fieldset#말머리 {
+                margin-top: 1em;
+                padding-right: 1em;
+                width: max-content;
+                border: 1px solid #cecdce;
+            }
+        }
+
+        @media (width <= 768px) {
+            legend { display: none; }
+            fieldset#말머리 {
+                flex-wrap: wrap;
+                border: none;
+                width: 100%;
+                padding: 0.2em;
+            }
+        }
     `)
+
+	const fieldset = () =>
+		fromHTML(/*html*/ `
+        <fieldset id="말머리">
+            <legend>말머리</legend>
+            <input type="radio" name="말머리" value="" id="일반" checked />
+            <label for="일반">일반</label>
+            ${
+			Object.keys(tags)
+				.map((key) => /*html*/ `
+                <input type="radio" name="말머리" value="${key}" id="${key}" />
+                <label for="${key}" data-label="${key}">${key}</label>
+            `).join("")
+		}
+        </fieldset>`)
+
+	// https://gall.dcinside.com/board/write
+	// https://m.dcinside.com/write/rlike
+	if (location.pathname.includes("write")) {
+		const titleInput = document.querySelector("input[name=subject]")
+		const titleHover = document.querySelector("label[for=subject]")
+		if (titleInput) {
+			const tagRadio = fieldset()
+
+			const strictTags = Object.keys(tags).map((key) => new RegExp(`^${key}\\)\\s*`, "i"))
+
+			const removeTag = () => {
+				titleInput.value = strictTags.reduce((acc, re) => acc.replace(re, ""), titleInput.value)
+			}
+
+			tagRadio.addEventListener("change", (e) => {
+				const target = e.target
+				if (!(target instanceof HTMLInputElement && target.checked)) return
+				if (titleHover) titleHover.innerText = ""
+
+				const value = target.value
+				removeTag()
+
+				if (value.length === 0) return
+				titleInput.value = `${value}) ${titleInput.value}`
+			})
+
+			document.querySelector("fieldset:has(input[name=subject]),#placeholder0")
+				?.insertAdjacentElement("afterend", tagRadio)
+		}
+	}
 
 	const tag = () =>
 		Array
@@ -73,10 +179,10 @@
                 `
 			})
 
-	tag()
-
 	const tbody = document.querySelector("tbody")
 	if (tbody) {
+		tag()
+
 		const observer = new MutationObserver(tag)
 
 		observer.observe(tbody, { childList: true })
