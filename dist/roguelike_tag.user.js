@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.1.0
+// @version      0.1.1
 // @description  제목별 태그 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
@@ -23,7 +23,7 @@
 		Object.fromEntries(Object.entries(record).map(([k, v]) => [k, fn(v)]))
 
 	/** @type {(r: RegExp) => RegExp} */
-	const reTag = (r) => new RegExp(`^(${r.source}\\s*\\)?\\s*)`, "i")
+	const reTag = (r) => new RegExp(`^(${r.source}\\s*?(?:\\)|\\s)\\s*)`, "i")
 
 	/** @type {(html: string) => Element} */
 	const fromHTML = (html) => {
