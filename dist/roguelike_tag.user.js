@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.1.2
+// @version      0.1.3
 // @description  제목별 태그 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
-// @match        https://m.dcinside.com/*
+// @match        https://m.dcinside.com/*/rlike*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=github.com
 // @homepageURL  https://github.com/scarf005/userscript
 // @supportURL   https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc
@@ -129,9 +129,11 @@
 		}
         </fieldset>`)
 
-	// https://gall.dcinside.com/board/write
-	// https://m.dcinside.com/write/rlike
-	if (location.pathname.includes("write")) {
+	const url = new URL(window.location.href)
+	if (
+		(url.host === "m.dcinside.com" || url.searchParams.get("id") === "rlike") &&
+		url.pathname.includes("write")
+	) {
 		const titleInput = document.querySelector("input[name=subject]")
 		const titleHover = document.querySelector("label[for=subject]")
 		if (titleInput) {
