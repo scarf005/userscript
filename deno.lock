@@ -1,0 +1,20 @@
+{
+  "version": "3",
+  "packages": {
+    "specifiers": {
+      "npm:@violentmonkey/types@0.1.7": "npm:@violentmonkey/types@0.1.7",
+      "npm:typed-query-selector@2.11.0": "npm:typed-query-selector@2.11.0"
+    },
+    "npm": {
+      "@violentmonkey/types@0.1.7": {
+        "integrity": "sha512-1czfk2Kevw8KlUCbqnzNJBtIJiSG0y3s3hHT12D08OivyNGO2OioKsfJ7BedRFE4KkxRDudf33K2xxDhRtQp+g==",
+        "dependencies": {}
+      },
+      "typed-query-selector@2.11.0": {
+        "integrity": "sha512-qBs4sfmnLlPOyo2oSdvHbIFHe2CPgU54/1UGfSNceb7LARpIEVxUaeRX0Doje6oKpuySS2stqy90R3YrynR8Kg==",
+        "dependencies": {}
+      }
+    }
+  },
+  "remote": {}
+}
