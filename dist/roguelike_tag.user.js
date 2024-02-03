@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.1.1
+// @version      0.1.2
 // @description  제목별 태그 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
@@ -181,6 +181,9 @@
 
 	const tbody = document.querySelector("tbody")
 	if (tbody) {
+		const evilJquerySearchTrigger = document.querySelector("input[name=s_keyword]")
+		if (evilJquerySearchTrigger) evilJquerySearchTrigger.value = ""
+
 		tag()
 
 		const observer = new MutationObserver(tag)
