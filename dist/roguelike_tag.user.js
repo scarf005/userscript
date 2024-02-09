@@ -17,14 +17,6 @@
 {
 	"use strict"
 
-	/** @type {<T, O, K extends string>(record: Readonly<Record<K, T>>, fn: (value: T, key: K) => O) => Record<K, O>} */
-	const mapValues = (record, fn) =>
-		// @ts-ignore: using typescript on js is hard
-		Object.fromEntries(Object.entries(record).map(([k, v]) => [k, fn(v)]))
-
-	/** @type {(r: RegExp) => RegExp} */
-	const reTag = (r) => new RegExp(`^(${r.source}\\s*?(?:\\)|\\s)\\s*)`, "i")
-
 	/** @type {(html: string) => Element} */
 	const fromHTML = (html) => {
 		const template = document.createElement("template")
@@ -51,17 +43,25 @@
 		return color
 	}
 
-	/** @type {Record<string, RegExp>}>} */
-	const tags = mapValues({
-		돌죽: /(?:돌죽|ㄷㅈ)/,
-		톰죽: /(?:톰죽|ㅌㅈ|tome4?)/,
-		밝밤: /(?:카타클|ㅋㅌㅋ)?\s*(?:ㅂㅂ|밝밤|bn)/,
-		dda: /(?:카타클|ㅋㅌㅋ)?\s*(?:어둠밤|dda)/,
-		coq: /(?:coq|caves of qud|qud)/,
+	/** @type {Record<string, RegExp>} */
+	const tagPreset = {
+		돌죽: /(돌죽|ㄷㅈ)/,
+		톰죽: /(톰죽|ㅌㅈ|tome4?)/,
+		밝밤: /(카타클|ㅋㅌㅋ)?\s*(ㅂㅂ|밝밤|bn)/,
+		dda: /(카타클|ㅋㅌㅋ)?\s*(어둠밤|dda)/,
+		coq: /(coq|caves of qud|qud)/,
 		엘린: /엘린/,
 		엘로나: /엘로나\+?/,
-		드포: /(?:ㄷㅍ|드포)/,
-	}, reTag)
+		드포: /(ㄷㅍ|드포)/,
+	}
+
+	/** @type {(x: string) => string[] | undefined} */
+	const parseTags = (x) => tagsRe.exec(x)?.[1].split(",").map((y) => y.trim()).map(parseTag)
+	const tagsRe = /^([^\)]*)\)\s*/
+
+	/** @type {(x: string) => string} */
+	const parseTag = (x) => tagPresetKeys.find((name) => tagPreset[name].test(x)) ?? x
+	const tagPresetKeys = Object.keys(tagPreset)
 
 	GM_addStyle(/*css*/ `
         :root { --label-color: black; }
@@ -78,7 +78,7 @@
             color: white;
             display: inline-block;
             font-weight: bold;
-            padding: 0.1em 0.5em;
+            padding: 0.1em 0.4em;
             border-radius: 2em;
         }
 
@@ -114,6 +114,19 @@
                 width: max-content;
                 border: 1px solid #cecdce;
             }
+
+            td.gall_tit.ub-word {
+                & {
+                    display: flex;
+                    gap: 0.4em;
+                    align-items: center;
+                }
+
+                a {
+                    display: flex;
+                    gap: 0.2em;
+                }
+            }
         }
 
         @media (width <= 768px) {
@@ -137,7 +150,7 @@
             <input type="radio" name="말머리" value="" id="일반" checked />
             <label for="일반">일반</label>
             ${
-			Object.keys(tags)
+			tagPresetKeys
 				.map((key) => /*html*/ `
                 <input type="radio" name="말머리" value="${key}" id="${key}" />
                 <label for="${key}" ${attr(key)}>${key}</label>
@@ -146,8 +159,9 @@
         </fieldset>`)
 
 	const url = new URL(window.location.href)
+	const isMobile = url.host === "m.dcinside.com"
 	if (
-		(url.host === "m.dcinside.com" || url.searchParams.get("id") === "rlike") &&
+		(isMobile || url.searchParams.get("id") === "rlike") &&
 		url.pathname.includes("write")
 	) {
 		const titleInput = document.querySelector("input[name=subject]")
@@ -155,7 +169,7 @@
 		if (titleInput) {
 			const tagRadio = fieldset()
 
-			const strictTags = Object.keys(tags).map((key) => new RegExp(`^${key}\\)\\s*`, "i"))
+			const strictTags = tagPresetKeys.map((key) => new RegExp(`^${key}\\)\\s*`, "i"))
 
 			const removeTag = () => {
 				titleInput.value = strictTags.reduce((acc, re) => acc.replace(re, ""), titleInput.value)
@@ -184,16 +198,15 @@
 				document.querySelectorAll("tr.us-post td.gall_tit a:first-child:has(em),span.subjectin"),
 			)
 			.flatMap((el) => {
-				const search = Object.entries(tags).find(([, re]) => re.test(el.innerText))
-				if (!search) return []
-
-				const [key, re] = search
-				return [{ el, key, re }]
+				const tags = parseTags(el.innerText)
+				return tags ? { el, tags } : []
 			})
-			.forEach(({ el, key, re }) => {
+			.forEach(({ el, tags }) => {
+				const labels = tags.map((key) => /*html*/ `<span ${attr(key)}>${key}</span>`)
+
 				el.innerHTML = /*html*/ `
-                    <span ${attr(key)}>${key}</span>
-                    ${el.innerText.replace(re, "")}
+                    ${labels.join("")}
+                    ${el.innerText.replace(tagsRe, "")}
                 `
 			})
 
