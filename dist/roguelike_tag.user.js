@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.1.3
+// @version      0.2.0
 // @description  제목별 태그 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
@@ -33,25 +33,38 @@
 		return template.content.children[0]
 	}
 
-	/** @type {Record<string, { re: RegExp, color: string }>} */
-	const tags = mapValues({
-		돌죽: { re: /(?:돌죽|ㄷㅈ)/, color: "#63200b" },
-		톰죽: { re: /(?:톰죽|ㅌㅈ|tome4?)/, color: "#9227b0" },
-		밝밤: { re: /(?:카타클|ㅋㅌㅋ)?\s*(?:ㅂㅂ|밝밤|bn)/, color: "#2db53d" },
-		dda: { re: /(?:카타클|ㅋㅌㅋ)?\s*(?:어둠밤|dda)/, color: "#1c4f3c" },
-		coq: { re: /(?:coq|caves of qud|qud)/, color: "#6fa698" },
-		엘린: { re: /엘린/, color: "#f5ab7a" },
-		엘로나: { re: /엘로나\+?/, color: "#d6651a" },
-		드포: { re: /(?:ㄷㅍ|드포)/, color: "#f5bf36" },
-	}, ({ re, color }) => ({ re: reTag(re), color }))
+	/** @type {Map<string, string>} */
+	const rgbCache = new Map()
+	const salt = "asdf"
 
-	const colors = Object.entries(tags)
-		.map(([key, { color }]) => /*css*/ `[data-label="${key}"] { --label-color: ${color}; }`)
-		.join("\n")
+	/**
+	 * hashes given string into random RGB color
+	 * @type {(str: string) => string}
+	 */
+	const hashRGB = (str) => {
+		const cache = rgbCache.get(str)
+		if (cache) return cache
+		const hashed = (str + salt)
+			.split("").reduce((acc, char) => char.charCodeAt(0) + ((acc << 5) - acc), 0)
+		const color = `rgb(${(hashed >> 16) & 0xff},${(hashed >> 8) & 0xff},${hashed & 0xff})`
+		rgbCache.set(str, color)
+		return color
+	}
+
+	/** @type {Record<string, RegExp>}>} */
+	const tags = mapValues({
+		돌죽: /(?:돌죽|ㄷㅈ)/,
+		톰죽: /(?:톰죽|ㅌㅈ|tome4?)/,
+		밝밤: /(?:카타클|ㅋㅌㅋ)?\s*(?:ㅂㅂ|밝밤|bn)/,
+		dda: /(?:카타클|ㅋㅌㅋ)?\s*(?:어둠밤|dda)/,
+		coq: /(?:coq|caves of qud|qud)/,
+		엘린: /엘린/,
+		엘로나: /엘로나\+?/,
+		드포: /(?:ㄷㅍ|드포)/,
+	}, reTag)
 
 	GM_addStyle(/*css*/ `
         :root { --label-color: black; }
-        ${colors}
 
         legend,
         span[data-label],
@@ -114,6 +127,9 @@
         }
     `)
 
+	/** @type {(key: string) => string} */
+	const attr = (key) => /*html*/ `data-label="${key}" style="--label-color:${hashRGB(key)}"`
+
 	const fieldset = () =>
 		fromHTML(/*html*/ `
         <fieldset id="말머리">
@@ -124,7 +140,7 @@
 			Object.keys(tags)
 				.map((key) => /*html*/ `
                 <input type="radio" name="말머리" value="${key}" id="${key}" />
-                <label for="${key}" data-label="${key}">${key}</label>
+                <label for="${key}" ${attr(key)}>${key}</label>
             `).join("")
 		}
         </fieldset>`)
@@ -168,15 +184,15 @@
 				document.querySelectorAll("tr.us-post td.gall_tit a:first-child:has(em),span.subjectin"),
 			)
 			.flatMap((el) => {
-				const search = Object.entries(tags).find(([, { re }]) => re.test(el.innerText))
+				const search = Object.entries(tags).find(([, re]) => re.test(el.innerText))
 				if (!search) return []
 
-				const [key, { re }] = search
+				const [key, re] = search
 				return [{ el, key, re }]
 			})
 			.forEach(({ el, key, re }) => {
 				el.innerHTML = /*html*/ `
-                    <span data-label="${key}">${key}</span>
+                    <span ${attr(key)}>${key}</span>
                     ${el.innerText.replace(re, "")}
                 `
 			})
