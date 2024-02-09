@@ -115,6 +115,7 @@
                 border: 1px solid #cecdce;
             }
 
+            td.gall_writer.ub-writer { text-align: left; }
             td.gall_tit.ub-word {
                 & {
                     display: flex;
