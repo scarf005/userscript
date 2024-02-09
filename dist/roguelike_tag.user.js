@@ -204,11 +204,13 @@
 			})
 			.forEach(({ el, tags }) => {
 				const labels = tags.map((key) => /*html*/ `<span ${attr(key)}>${key}</span>`)
+				const em = el.querySelector("em")?.cloneNode()
 
 				el.innerHTML = /*html*/ `
                     ${labels.join("")}
                     ${el.innerText.replace(tagsRe, "")}
                 `
+				if (em) el.prepend(em)
 			})
 
 	const tbody = document.querySelector("tbody")
