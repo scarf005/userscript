@@ -218,7 +218,9 @@
 		const evilJquerySearchTrigger = document.querySelector("input[name=s_keyword]")
 		if (evilJquerySearchTrigger) evilJquerySearchTrigger.value = ""
 
+		const now = performance.now()
 		tag()
+		console.log(`adding tags took ${Math.round(performance.now() - now)}ms`)
 
 		const observer = new MutationObserver(tag)
 
