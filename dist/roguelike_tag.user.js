@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.2.0
+// @version      0.2.1
 // @description  제목별 태그 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
@@ -56,7 +56,9 @@
 	}
 
 	/** @type {(x: string) => string[] | undefined} */
-	const parseTags = (x) => tagsRe.exec(x)?.[1].split(",").map((y) => y.trim()).map(parseTag)
+	const parseTags = (x) =>
+		tagsRe.exec(x)?.[1].split(",").map((y) => y.trim().toLocaleLowerCase()).map(parseTag)
+
 	const tagsRe = /^([^\)]*)\)\s*/
 
 	/** @type {(x: string) => string} */
