@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.2.1
+// @version      0.2.2
 // @description  제목별 태그 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
@@ -45,14 +45,16 @@
 
 	/** @type {Record<string, RegExp>} */
 	const tagPreset = {
-		돌죽: /(돌죽|ㄷㅈ)/,
+		돌죽: /ㄷㅈ/,
 		톰죽: /(톰죽|ㅌㅈ|tome4?)/,
 		밝밤: /(카타클|ㅋㅌㅋ)?\s*(ㅂㅂ|밝밤|bn)/,
 		dda: /(카타클|ㅋㅌㅋ)?\s*(어둠밤|dda)/,
 		coq: /(coq|caves of qud|qud)/,
-		엘린: /엘린/,
-		엘로나: /엘로나\+?/,
-		드포: /(ㄷㅍ|드포)/,
+		드포: /ㄷㅍ/,
+		넷핵: /ㄴㅎ/,
+		파토스: /ㅍㅌㅅ/,
+        스톤샤드: /ㅅㅌㅅㄷ/,
+        콰지모프: /ㅋㅈㅁㅍ|ㅋㅈ/,
 	}
 
 	/** @type {(x: string) => string[] | undefined} */
