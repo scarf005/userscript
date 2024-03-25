@@ -7,7 +7,7 @@
 	},
 	"compilerOptions": {
 		"allowJs": true,
-		"checkJs": true,
+		"checkJs": false,
 		"types": ["./types.d.ts"],
 		"lib": ["deno.window", "dom", "dom.iterable"],
 		"exactOptionalPropertyTypes": true
