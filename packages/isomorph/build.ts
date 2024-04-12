@@ -26,5 +26,5 @@ const metadata = metadataBlock({
 
 if (import.meta.main) {
 	const code = await bundleUserScript({ url: import.meta.resolve("./mod.ts"), metadata })
-	await Deno.writeTextFile(resolve("../../dist/isomorph.user.js"), code)
+	await Deno.writeTextFile(resolve(import.meta.dirname!, "../../dist/isomorph.user.js"), code)
 }
