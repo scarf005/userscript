@@ -3,6 +3,9 @@
 	"deno.lint": true,
 	"deno.unstable": true,
 	"deno.config": "./deno.jsonc",
+	"search.exclude": {
+		"dist/**": true
+	},
 	"[json][jsonc][markdown][javascript][typescript][typescriptreact]": {
 		"editor.defaultFormatter": "denoland.vscode-deno"
 	},
