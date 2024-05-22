@@ -34,6 +34,12 @@ const parseItch: (s: string) => Date = (s): Date => {
 	return new Date(`${year}-${monthname[month]}-${day}T${hour}:${minute}:00.000Z`)
 }
 
+const isoMorphRaw = ({ xs, fn }: { xs: NodeListOf<HTMLElement>; fn: (el: HTMLElement) => void }) =>
+	xs.forEach((el) => {
+		fn(el)
+		el.setAttribute("data-isomorph", "true")
+	})
+
 /**
  * @param xs - target elements
  * @param getTime - query the time from the element
@@ -69,4 +75,25 @@ if (location.hostname.endsWith("itch.io")) {
 			replaceText(el, toISODate(time))
 		},
 	})
+}
+
+if (location.hostname.endsWith("github.com")) {
+	const github = () => {
+		isoMorphRaw({
+			xs: document.querySelectorAll<HTMLElement>("relative-time"),
+			fn: (el) => el.setAttribute("lang", "ko-KR"),
+		})
+		isoMorph({
+			xs: document.querySelectorAll(
+				`div.TimelineItem-body > h3,h3[data-testid="commit-group-title"]`,
+			),
+			getTime: (el) => new Date(el.innerText.split("Commits on ")[1]),
+			fn: (el, time) => {
+				console.log(el)
+				replaceText(el, `Commits on ${toISODate(time)}`)
+			},
+		})
+	}
+	github()
+	globalThis.addEventListener("turbo:render", github)
 }
