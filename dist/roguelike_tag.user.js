@@ -14,6 +14,7 @@
 // @grant        GM_addStyle
 // ==/UserScript==
 
+// @ts-check
 {
 	"use strict"
 
@@ -217,7 +218,7 @@
 				if (em) el.prepend(em)
 			})
 
-	const tbody = document.querySelector("tbody")
+	const tbody = document.querySelector("tbody,ul.gall-detail-lst")
 	if (tbody) {
 		const evilJquerySearchTrigger = document.querySelector("input[name=s_keyword]")
 		if (evilJquerySearchTrigger) evilJquerySearchTrigger.value = ""
