@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.2.2
+// @version      0.2.3
 // @description  제목별 태그 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
@@ -54,8 +54,8 @@
 		드포: /ㄷㅍ/,
 		넷핵: /ㄴㅎ/,
 		파토스: /ㅍㅌㅅ/,
-        스톤샤드: /ㅅㅌㅅㄷ/,
-        콰지모프: /ㅋㅈㅁㅍ|ㅋㅈ/,
+		스톤샤드: /ㅅㅌㅅㄷ/,
+		콰지모프: /ㅋㅈㅁㅍ|ㅋㅈ/,
 	}
 
 	/** @type {(x: string) => string[] | undefined} */
@@ -121,18 +121,6 @@
             }
 
             td.gall_writer.ub-writer { text-align: left; }
-            td.gall_tit.ub-word {
-                & {
-                    display: flex;
-                    gap: 0.4em;
-                    align-items: center;
-                }
-
-                a {
-                    display: flex;
-                    gap: 0.2em;
-                }
-            }
         }
 
         @media (width <= 768px) {
@@ -164,7 +152,7 @@
 		}
         </fieldset>`)
 
-	const url = new URL(window.location.href)
+	const url = new URL(globalThis.location.href)
 	const isMobile = url.host === "m.dcinside.com"
 	if (
 		(isMobile || url.searchParams.get("id") === "rlike") &&
@@ -211,10 +199,7 @@
 				const labels = tags.map((key) => /*html*/ `<span ${attr(key)}>${key}</span>`)
 				const em = el.querySelector("em")?.cloneNode()
 
-				el.innerHTML = /*html*/ `
-                    ${labels.join("")}
-                    ${el.innerText.replace(tagsRe, "")}
-                `
+				el.innerHTML = /*html*/ `${labels.join("")}${el.innerText.replace(tagsRe, "")}`
 				if (em) el.prepend(em)
 			})
 
