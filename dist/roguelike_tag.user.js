@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.2.3
+// @version      0.3.0
 // @description  제목별 태그 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
@@ -56,6 +56,7 @@
 		파토스: /ㅍㅌㅅ/,
 		스톤샤드: /ㅅㅌㅅㄷ/,
 		콰지모프: /ㅋㅈㅁㅍ|ㅋㅈ/,
+		엘린: /ㅇㄹ/,
 	}
 
 	/** @type {(x: string) => string[] | undefined} */
@@ -166,7 +167,10 @@
 			const strictTags = tagPresetKeys.map((key) => new RegExp(`^${key}\\)\\s*`, "i"))
 
 			const removeTag = () => {
-				titleInput.value = strictTags.reduce((acc, re) => acc.replace(re, ""), titleInput.value)
+				titleInput.value = strictTags.reduce(
+					(acc, re) => acc.replace(re, ""),
+					titleInput.value,
+				)
 			}
 
 			tagRadio.addEventListener("change", (e) => {
@@ -189,7 +193,9 @@
 	const tag = () =>
 		Array
 			.from(
-				document.querySelectorAll("tr.us-post td.gall_tit a:first-child:has(em),span.subjectin"),
+				document.querySelectorAll(
+					"tr.us-post td.gall_tit a:first-child:has(em),span.subjectin",
+				),
 			)
 			.flatMap((el) => {
 				const tags = parseTags(el.innerText)
