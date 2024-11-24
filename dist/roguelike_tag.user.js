@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // @ts-check
-{
+const main = () => {
 	"use strict"
 
 	/** @type {(html: string) => Element} */
@@ -161,33 +161,32 @@
 	) {
 		const titleInput = document.querySelector("input[name=subject]")
 		const titleHover = document.querySelector("label[for=subject]")
-		if (titleInput) {
-			const tagRadio = fieldset()
+		if (!titleInput) return
+		const tagRadio = fieldset()
 
-			const strictTags = tagPresetKeys.map((key) => new RegExp(`^${key}\\)\\s*`, "i"))
+		const strictTags = tagPresetKeys.map((key) => new RegExp(`^${key}\\)\\s*`, "i"))
 
-			const removeTag = () => {
-				titleInput.value = strictTags.reduce(
-					(acc, re) => acc.replace(re, ""),
-					titleInput.value,
-				)
-			}
-
-			tagRadio.addEventListener("change", (e) => {
-				const target = e.target
-				if (!(target instanceof HTMLInputElement && target.checked)) return
-				if (titleHover) titleHover.innerText = ""
-
-				const value = target.value
-				removeTag()
-
-				if (value.length === 0) return
-				titleInput.value = `${value}) ${titleInput.value}`
-			})
-
-			document.querySelector("fieldset:has(input[name=subject]),#placeholder0")
-				?.insertAdjacentElement("afterend", tagRadio)
+		const removeTag = () => {
+			titleInput.value = strictTags.reduce(
+				(acc, re) => acc.replace(re, ""),
+				titleInput.value,
+			)
 		}
+
+		tagRadio.addEventListener("change", (e) => {
+			const target = e.target
+			if (!(target instanceof HTMLInputElement && target.checked)) return
+			if (titleHover) titleHover.innerText = ""
+
+			const value = target.value
+			removeTag()
+
+			if (value.length === 0) return
+			titleInput.value = `${value}) ${titleInput.value}`
+		})
+
+		document.querySelector("fieldset:has(input[name=subject]),#placeholder0")
+			?.insertAdjacentElement("afterend", tagRadio)
 	}
 
 	const tag = () =>
@@ -210,16 +209,17 @@
 			})
 
 	const tbody = document.querySelector("tbody,ul.gall-detail-lst")
-	if (tbody) {
-		const evilJquerySearchTrigger = document.querySelector("input[name=s_keyword]")
-		if (evilJquerySearchTrigger) evilJquerySearchTrigger.value = ""
+	if (!tbody) return
+	const evilJquerySearchTrigger = document.querySelector("input[name=s_keyword]")
+	if (evilJquerySearchTrigger) evilJquerySearchTrigger.value = ""
 
-		const now = performance.now()
-		tag()
-		console.log(`adding tags took ${Math.round(performance.now() - now)}ms`)
+	const now = performance.now()
+	tag()
+	console.log(`adding tags took ${Math.round(performance.now() - now)}ms`)
 
-		const observer = new MutationObserver(tag)
+	const observer = new MutationObserver(tag)
 
-		observer.observe(tbody, { childList: true })
-	}
+	observer.observe(tbody, { childList: true })
 }
+
+main()
