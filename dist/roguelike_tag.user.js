@@ -253,7 +253,6 @@ const main = () => {
 		const currentKeyword = decodeKeyword(
 			new URLSearchParams(location.search).get(isMobile ? "serval" : "s_keyword") ?? "",
 		)
-		console.log({ currentKeyword })
 		const searchLinks = tagPresetKeys.map(asSearchLink(currentKeyword))
 		const allClass = currentKeyword ? "" : "on"
 
@@ -304,7 +303,6 @@ const main = () => {
                 </div>
             </div>
             `
-			console.log(template)
 			document.querySelector("section.gall-lst-group.grid  .tab-basic")?.insertAdjacentHTML(
 				"afterend",
 				template,
