@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.3.0
-// @description  제목별 태그 추가
+// @version      0.4.0
+// @description  제목별 태그 및 말머리 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
 // @match        https://m.dcinside.com/*/rlike*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // @ts-check
-{
+const main = () => {
 	"use strict"
 
 	/** @type {(html: string) => Element} */
@@ -44,8 +44,14 @@
 		return color
 	}
 
+	/**
+	 * @type {<T>(arr: T[], x: number) => [T[], T[]]}
+	 */
+	const splitAt = (arr, x) => [arr.slice(0, x), arr.slice(x)]
+
 	/** @type {Record<string, RegExp>} */
 	const tagPreset = {
+		엘린: /ㅇㄹ/,
 		돌죽: /ㄷㅈ/,
 		톰죽: /(톰죽|ㅌㅈ|tome4?)/,
 		밝밤: /(카타클|ㅋㅌㅋ)?\s*(ㅂㅂ|밝밤|bn)/,
@@ -56,7 +62,6 @@
 		파토스: /ㅍㅌㅅ/,
 		스톤샤드: /ㅅㅌㅅㄷ/,
 		콰지모프: /ㅋㅈㅁㅍ|ㅋㅈ/,
-		엘린: /ㅇㄹ/,
 	}
 
 	/** @type {(x: string) => string[] | undefined} */
@@ -99,6 +104,14 @@
         input[type="radio"] { display: none; }
         input[type="radio"]+label { background-color: gray; }
         input[type="radio"]:checked+label { background-color: var(--label-color); }
+
+        .mal-sw-wrap a[data-label] {
+            color: white;
+            background-color: var(--label-color);
+            padding: 0.1em 0.4em;
+            margin: 0.1em;
+            border-radius: 2.2em;
+        }
 
         fieldset#말머리 {
             display: flex;
@@ -161,33 +174,32 @@
 	) {
 		const titleInput = document.querySelector("input[name=subject]")
 		const titleHover = document.querySelector("label[for=subject]")
-		if (titleInput) {
-			const tagRadio = fieldset()
+		if (!titleInput) return
+		const tagRadio = fieldset()
 
-			const strictTags = tagPresetKeys.map((key) => new RegExp(`^${key}\\)\\s*`, "i"))
+		const strictTags = tagPresetKeys.map((key) => new RegExp(`^${key}\\)\\s*`, "i"))
 
-			const removeTag = () => {
-				titleInput.value = strictTags.reduce(
-					(acc, re) => acc.replace(re, ""),
-					titleInput.value,
-				)
-			}
-
-			tagRadio.addEventListener("change", (e) => {
-				const target = e.target
-				if (!(target instanceof HTMLInputElement && target.checked)) return
-				if (titleHover) titleHover.innerText = ""
-
-				const value = target.value
-				removeTag()
-
-				if (value.length === 0) return
-				titleInput.value = `${value}) ${titleInput.value}`
-			})
-
-			document.querySelector("fieldset:has(input[name=subject]),#placeholder0")
-				?.insertAdjacentElement("afterend", tagRadio)
+		const removeTag = () => {
+			titleInput.value = strictTags.reduce(
+				(acc, re) => acc.replace(re, ""),
+				titleInput.value,
+			)
 		}
+
+		tagRadio.addEventListener("change", (e) => {
+			const target = e.target
+			if (!(target instanceof HTMLInputElement && target.checked)) return
+			if (titleHover) titleHover.innerText = ""
+
+			const value = target.value
+			removeTag()
+
+			if (value.length === 0) return
+			titleInput.value = `${value}) ${titleInput.value}`
+		})
+
+		document.querySelector("fieldset:has(input[name=subject]),#placeholder0")
+			?.insertAdjacentElement("afterend", tagRadio)
 	}
 
 	const tag = () =>
@@ -209,17 +221,113 @@
 				if (em) el.prepend(em)
 			})
 
-	const tbody = document.querySelector("tbody,ul.gall-detail-lst")
-	if (tbody) {
-		const evilJquerySearchTrigger = document.querySelector("input[name=s_keyword]")
-		if (evilJquerySearchTrigger) evilJquerySearchTrigger.value = ""
+	/** @type {(keyword: string) => string} */
+	const encodeKeyword = (keyword) => encodeURIComponent(`${keyword})`).replaceAll("%", ".")
 
-		const now = performance.now()
-		tag()
-		console.log(`adding tags took ${Math.round(performance.now() - now)}ms`)
+	/** @type {(keyword: string) => string} */
+	const decodeKeyword = (keyword) =>
+		decodeURIComponent(keyword.replaceAll(".", "%")).replace(")", "")
 
-		const observer = new MutationObserver(tag)
-
-		observer.observe(tbody, { childList: true })
+	/** @type {(currentKeyword: string) => (keyword: string) => string} */
+	const asSearchLink = (currentKeyword) => (keyword) => {
+		const searchParams = new URLSearchParams(location.search)
+		searchParams.set("s_type", isMobile ? "subject_m" : "search_subject")
+		searchParams.set(
+			isMobile ? "serval" : "s_keyword",
+			isMobile ? `${keyword})` : encodeKeyword(keyword),
+		)
+		const on = currentKeyword === keyword ? "on" : ""
+		return /*html*/ `
+            <li class="${isMobile ? "swiper-slide" : ""} ${on}">
+                <a
+                    class="${on}"
+                    ${attr(keyword)}
+                    href="${location.pathname}?${searchParams}"
+                >${keyword}</a>
+            </li>`
 	}
+
+	const initKeywordNav = () => {
+		const isRoguelike = location.pathname.includes("rlike") || location.search.includes("rlike")
+		if (!isRoguelike || document.querySelector(".center_box")) return
+		const currentKeyword = decodeKeyword(
+			new URLSearchParams(location.search).get(isMobile ? "serval" : "s_keyword") ?? "",
+		)
+		console.log({ currentKeyword })
+		const searchLinks = tagPresetKeys.map(asSearchLink(currentKeyword))
+		const allClass = currentKeyword ? "" : "on"
+
+		const pcLayout = () => {
+			const [links, more] = splitAt(searchLinks, 8)
+
+			const moreTemplate = /*html*/ `
+                <button
+                    type="button"
+                    class="btn_subject_more"
+                    style="z-index:2;"
+                    onclick="showLayer(this,'subject_morelist');return false;"
+                >
+                    <em class="icon_subject_more sp_img"></em><span class="blind">말머리 더보기</span>
+                </button>
+                <div class="subject_morelist" id="subject_morelist" style="display:none;">
+                    <ul>${more.join("\n")}</ul>
+                </div>`
+
+			const template = /*html*/ `
+            <div class="center_box">
+                <div class="inner">
+                    <ul>
+                        <li>
+                            <a class="${allClass}" onclick="listSearchHead('all')">전체</a>
+                        </li>
+                        ${links.join("\n")}
+                    </ul>
+                    ${more.length > 0 ? moreTemplate : ""}
+                </div>
+            </div>`
+
+			document.querySelector(".array_tab.left_box")?.insertAdjacentHTML("afterend", template)
+		}
+		const mobileLayout = () => {
+			const template = /*html*/ `
+            <div class="mal-sw-wrap">
+                <div class="detail-sel-box">
+                    <div class="mal-slider">
+                    <div class="mal-swiper swiper-container swiper-container-horizontal" id="swiper-headtxt">
+                        <ul class="mal-lst swiper-wrapper">
+                        <li class="swiper-slide ${allClass}"> <a href="javascript:headText_change();">전체</a> </li>
+                        ${searchLinks.join("\n")}
+                        </ul>
+                    </div>
+                    </div>
+                    <div class="rt"> </div>
+                </div>
+            </div>
+            `
+			console.log(template)
+			document.querySelector("section.gall-lst-group.grid  .tab-basic")?.insertAdjacentHTML(
+				"afterend",
+				template,
+			)
+		}
+		isMobile ? mobileLayout() : pcLayout()
+	}
+
+	const tbody = document.querySelector("tbody,ul.gall-detail-lst")
+	if (!tbody) return
+
+	initKeywordNav()
+
+	const evilJquerySearchTrigger = document.querySelector("input[name=s_keyword]")
+	if (evilJquerySearchTrigger) evilJquerySearchTrigger.value = ""
+
+	const now = performance.now()
+	tag()
+	console.log(`adding tags took ${Math.round(performance.now() - now)}ms`)
+
+	const observer = new MutationObserver(tag)
+
+	observer.observe(tbody, { childList: true })
 }
+
+main()
