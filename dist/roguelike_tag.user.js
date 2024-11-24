@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.3.0
-// @description  제목별 태그 추가
+// @version      0.4.0
+// @description  제목별 태그 및 말머리 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
 // @match        https://m.dcinside.com/*/rlike*
@@ -44,8 +44,14 @@ const main = () => {
 		return color
 	}
 
+	/**
+	 * @type {<T>(arr: T[], x: number) => [T[], T[]]}
+	 */
+	const splitAt = (arr, x) => [arr.slice(0, x), arr.slice(x)]
+
 	/** @type {Record<string, RegExp>} */
 	const tagPreset = {
+		엘린: /ㅇㄹ/,
 		돌죽: /ㄷㅈ/,
 		톰죽: /(톰죽|ㅌㅈ|tome4?)/,
 		밝밤: /(카타클|ㅋㅌㅋ)?\s*(ㅂㅂ|밝밤|bn)/,
@@ -56,7 +62,6 @@ const main = () => {
 		파토스: /ㅍㅌㅅ/,
 		스톤샤드: /ㅅㅌㅅㄷ/,
 		콰지모프: /ㅋㅈㅁㅍ|ㅋㅈ/,
-		엘린: /ㅇㄹ/,
 	}
 
 	/** @type {(x: string) => string[] | undefined} */
@@ -208,8 +213,73 @@ const main = () => {
 				if (em) el.prepend(em)
 			})
 
+	/** @type {(keyword: string) => string} */
+	const encodeKeyword = (keyword) => encodeURIComponent(`${keyword})`).replaceAll("%", ".")
+
+	/** @type {(keyword: string) => string} */
+	const decodeKeyword = (keyword) =>
+		decodeURIComponent(keyword.replaceAll(".", "%")).replace(")", "")
+
+	/** @type {(currentKeyword: string) => (keyword: string) => string} */
+	const asSearchLink = (currentKeyword) => (keyword) => {
+		const searchParams = new URLSearchParams(location.search)
+		searchParams.set("s_type", "search_subject")
+		searchParams.set("s_keyword", encodeKeyword(keyword))
+
+		return /*html*/ `
+            <li>
+                <a
+                    class="${currentKeyword === keyword ? "on" : ""}"
+                    data-label=${keyword}
+                    href="${location.pathname}?${searchParams}"
+                >${keyword}</a>
+            </li>`
+	}
+
+	const initKeywordNav = () => {
+		if (document.querySelector(".center_box")) return
+		const currentKeyword = decodeKeyword(
+			new URLSearchParams(location.search).get("s_keyword") ?? "",
+		)
+		console.log({ currentKeyword })
+		const [links, more] = splitAt(tagPresetKeys.map(asSearchLink(currentKeyword)), 8)
+
+		const moreTemplate = /*html*/ `
+            <button
+                type="button"
+                class="btn_subject_more"
+                style="z-index:2;"
+                onclick="showLayer(this,'subject_morelist');return false;"
+            >
+                <em class="icon_subject_more sp_img"></em><span class="blind">말머리 더보기</span>
+            </button>
+            <div class="subject_morelist" id="subject_morelist" style="display:none;">
+                <ul>${more.join("\n")}</ul>
+            </div>`
+
+		const template = /*html*/ `
+            <div class="center_box">
+                <div class="inner">
+                    <ul>
+                        <li>
+                            <a
+                                class="${currentKeyword ? "" : "on"}"
+                                onclick="listSearchHead('all')"
+                            >전체</a>
+                        </li>
+                        ${links.join("\n")}
+                    </ul>
+                    ${more.length > 0 ? moreTemplate : ""}
+                </div>
+            </div>`
+		document.querySelector(".array_tab.left_box")?.insertAdjacentHTML("afterend", template)
+	}
+
 	const tbody = document.querySelector("tbody,ul.gall-detail-lst")
 	if (!tbody) return
+
+	initKeywordNav()
+
 	const evilJquerySearchTrigger = document.querySelector("input[name=s_keyword]")
 	if (evilJquerySearchTrigger) evilJquerySearchTrigger.value = ""
 
