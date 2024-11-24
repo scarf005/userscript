@@ -105,6 +105,14 @@ const main = () => {
         input[type="radio"]+label { background-color: gray; }
         input[type="radio"]:checked+label { background-color: var(--label-color); }
 
+        .mal-sw-wrap a[data-label] {
+            color: white;
+            background-color: var(--label-color);
+            padding: 0.1em 0.4em;
+            margin: 0.1em;
+            border-radius: 2.2em;
+        }
+
         fieldset#말머리 {
             display: flex;
             align-items: center;
@@ -223,56 +231,86 @@ const main = () => {
 	/** @type {(currentKeyword: string) => (keyword: string) => string} */
 	const asSearchLink = (currentKeyword) => (keyword) => {
 		const searchParams = new URLSearchParams(location.search)
-		searchParams.set("s_type", "search_subject")
-		searchParams.set("s_keyword", encodeKeyword(keyword))
-
+		searchParams.set("s_type", isMobile ? "subject_m" : "search_subject")
+		searchParams.set(
+			isMobile ? "serval" : "s_keyword",
+			isMobile ? `${keyword})` : encodeKeyword(keyword),
+		)
+		const on = currentKeyword === keyword ? "on" : ""
 		return /*html*/ `
-            <li>
+            <li class="${isMobile ? "swiper-slide" : ""} ${on}">
                 <a
-                    class="${currentKeyword === keyword ? "on" : ""}"
-                    data-label=${keyword}
+                    class="${on}"
+                    ${attr(keyword)}
                     href="${location.pathname}?${searchParams}"
                 >${keyword}</a>
             </li>`
 	}
 
 	const initKeywordNav = () => {
-		if (document.querySelector(".center_box")) return
+		const isRoguelike = location.pathname.includes("rlike") || location.search.includes("rlike")
+		if (!isRoguelike || document.querySelector(".center_box")) return
 		const currentKeyword = decodeKeyword(
-			new URLSearchParams(location.search).get("s_keyword") ?? "",
+			new URLSearchParams(location.search).get(isMobile ? "serval" : "s_keyword") ?? "",
 		)
 		console.log({ currentKeyword })
-		const [links, more] = splitAt(tagPresetKeys.map(asSearchLink(currentKeyword)), 8)
+		const searchLinks = tagPresetKeys.map(asSearchLink(currentKeyword))
+		const allClass = currentKeyword ? "" : "on"
 
-		const moreTemplate = /*html*/ `
-            <button
-                type="button"
-                class="btn_subject_more"
-                style="z-index:2;"
-                onclick="showLayer(this,'subject_morelist');return false;"
-            >
-                <em class="icon_subject_more sp_img"></em><span class="blind">말머리 더보기</span>
-            </button>
-            <div class="subject_morelist" id="subject_morelist" style="display:none;">
-                <ul>${more.join("\n")}</ul>
-            </div>`
+		const pcLayout = () => {
+			const [links, more] = splitAt(searchLinks, 8)
 
-		const template = /*html*/ `
+			const moreTemplate = /*html*/ `
+                <button
+                    type="button"
+                    class="btn_subject_more"
+                    style="z-index:2;"
+                    onclick="showLayer(this,'subject_morelist');return false;"
+                >
+                    <em class="icon_subject_more sp_img"></em><span class="blind">말머리 더보기</span>
+                </button>
+                <div class="subject_morelist" id="subject_morelist" style="display:none;">
+                    <ul>${more.join("\n")}</ul>
+                </div>`
+
+			const template = /*html*/ `
             <div class="center_box">
                 <div class="inner">
                     <ul>
                         <li>
-                            <a
-                                class="${currentKeyword ? "" : "on"}"
-                                onclick="listSearchHead('all')"
-                            >전체</a>
+                            <a class="${allClass}" onclick="listSearchHead('all')">전체</a>
                         </li>
                         ${links.join("\n")}
                     </ul>
                     ${more.length > 0 ? moreTemplate : ""}
                 </div>
             </div>`
-		document.querySelector(".array_tab.left_box")?.insertAdjacentHTML("afterend", template)
+
+			document.querySelector(".array_tab.left_box")?.insertAdjacentHTML("afterend", template)
+		}
+		const mobileLayout = () => {
+			const template = /*html*/ `
+            <div class="mal-sw-wrap">
+                <div class="detail-sel-box">
+                    <div class="mal-slider">
+                    <div class="mal-swiper swiper-container swiper-container-horizontal" id="swiper-headtxt">
+                        <ul class="mal-lst swiper-wrapper">
+                        <li class="swiper-slide ${allClass}"> <a href="javascript:headText_change();">전체</a> </li>
+                        ${searchLinks.join("\n")}
+                        </ul>
+                    </div>
+                    </div>
+                    <div class="rt"> </div>
+                </div>
+            </div>
+            `
+			console.log(template)
+			document.querySelector("section.gall-lst-group.grid  .tab-basic")?.insertAdjacentHTML(
+				"afterend",
+				template,
+			)
+		}
+		isMobile ? mobileLayout() : pcLayout()
 	}
 
 	const tbody = document.querySelector("tbody,ul.gall-detail-lst")
