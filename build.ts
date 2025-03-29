@@ -1,8 +1,6 @@
-import { resolve } from "https://deno.land/std@0.220.1/path/resolve.ts"
-import { dirname } from "https://deno.land/std@0.220.1/path/dirname.ts"
-import { basename } from "https://deno.land/std@0.220.1/path/basename.ts"
+import { basename, dirname, resolve } from "jsr:@std/path"
 
-import { bundle } from "https://deno.land/x/emit@0.28.0/mod.ts"
+import { bundle } from "jsr:@deno/emit"
 
 type Option = {
 	metadata: string

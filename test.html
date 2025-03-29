@@ -1,0 +1,55 @@
+<div class="center_box">
+  <div class="inner">
+    <ul>
+      <li><a onclick="listSearchHead('all')" class="on">전체</a></li>
+      <li><a onclick="listSearchHead(0)" class="">일반</a></li>
+      <li><a onclick="listSearchHead(90)" class="">핫산</a></li>
+      <li><a onclick="listSearchHead(130)" class="">🖼️짤</a></li>
+      <li><a onclick="listSearchHead(30)" class="">✍️창작</a></li>
+      <li><a onclick="listSearchHead(170)" class="">🚨스포</a></li>
+      <li><a onclick="listSearchHead(10)" class="">공식정보</a></li>
+      <li><a onclick="listSearchHead(20)" class="">유저정보</a></li>
+    </ul><button type="button" class="btn_subject_more" style="z-index:2;"
+      onclick="showLayer(this,'subject_morelist');return false;"><em class="icon_subject_more sp_img"></em><span
+        class="blind">말머리 더보기</span></button>
+    <div class="subject_morelist" id="subject_morelist" style="display:none;">
+      <ul>
+        <li><a onclick="listSearchHead(50)" class="">🏇경마</a></li>
+        <li><a onclick="listSearchHead(140)" class="">📁괴문서</a></li>
+        <li><a onclick="listSearchHead(40)" class="">공식핫산</a></li>
+        <li><a onclick="listSearchHead(70)" class="">서클,친구</a></li>
+        <li><a onclick="listSearchHead(160)" class="">굿즈</a></li>
+        <li><a onclick="listSearchHead(120)" class="">🏆대회</a></li>
+        <li><a onclick="listSearchHead(110)" class="">📜고증</a></li>
+        <li><a onclick="listSearchHead(150)" class="">🐴K경마</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="mal-sw-wrap">
+  <div class="detail-sel-box">
+    <div class="mal-slider">
+      <div class="mal-swiper swiper-container swiper-container-horizontal swiper-container-android" id="swiper-headtxt">
+        <ul class="mal-lst swiper-wrapper" style="transition-duration: 0ms; transform: translate3d(-440px, 0px, 0px);">
+          <li class="swiper-slide on"> <a href="javascript:headText_change();">전체</a> </li>
+          <li class="swiper-slide"> <a href="javascript:headText_change(0);">일반</a> </li>
+          <li class="swiper-slide"> <a href="javascript:headText_change(90);">핫산</a> </li>
+          <li class="swiper-slide"> <a href="javascript:headText_change(130);">🖼️짤</a> </li>
+          <li class="swiper-slide"> <a href="javascript:headText_change(30);">✍️창작</a> </li>
+          <li class="swiper-slide"> <a href="javascript:headText_change(170);">🚨스포</a> </li>
+          <li class="swiper-slide"> <a href="javascript:headText_change(10);">공식정보</a> </li>
+          <li class="swiper-slide"> <a href="javascript:headText_change(20);">유저정보</a> </li>
+          <li class="swiper-slide swiper-slide-prev"> <a href="javascript:headText_change(50);">🏇경마</a> </li>
+          <li class="swiper-slide swiper-slide-active"> <a href="javascript:headText_change(140);">📁괴문서</a> </li>
+          <li class="swiper-slide swiper-slide-next"> <a href="javascript:headText_change(40);">공식핫산</a> </li>
+          <li class="swiper-slide"> <a href="javascript:headText_change(70);">서클,친구</a> </li>
+          <li class="swiper-slide"> <a href="javascript:headText_change(160);">굿즈</a> </li>
+          <li class="swiper-slide"> <a href="javascript:headText_change(120);">🏆대회</a> </li>
+          <li class="swiper-slide"> <a href="javascript:headText_change(110);">📜고증</a> </li>
+          <li class="swiper-slide"> <a href="javascript:headText_change(150);">🐴K경마</a> </li>
+        </ul>
+      </div>
+    </div>
+    <div class="rt"> </div>
+  </div>
+</div>

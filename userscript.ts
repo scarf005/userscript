@@ -1,5 +1,5 @@
 import { LanguageCode } from "./langauge.ts"
-import { deepMerge } from "https://deno.land/std@0.220.1/collections/deep_merge.ts"
+import { deepMerge } from "jsr:@std/collections"
 
 export type Grant =
 	| "window.close"

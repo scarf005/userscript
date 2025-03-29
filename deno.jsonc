@@ -1,7 +1,7 @@
 {
-    "tasks": {
-        "build": "find packages -name 'build.ts' | xargs deno run -A"
-    },
+	"tasks": {
+		"build": "find packages -name 'build.ts' | xargs deno run -A"
+	},
 	"fmt": {
 		"semiColons": false,
 		"lineWidth": 100,

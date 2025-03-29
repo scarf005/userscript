@@ -1,4 +1,4 @@
-import { resolve } from "https://deno.land/std@0.220.1/path/resolve.ts"
+import { resolve } from "jsr:@std/path"
 
 import { bundleUserScript } from "../../build.ts"
 import { metadataBlock } from "../../userscript.ts"

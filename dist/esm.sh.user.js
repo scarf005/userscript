@@ -13,20 +13,20 @@
 // @match          https://esm.sh/*
 // ==/UserScript==
 {
-"use strict"
-const ghRe = /gh\/(?<owner>[^/]+)\/(?<repo>[^@]+)@(?<version>[^/]+)\/(?<file>[^ ]+)/;
-const ghBase = (kind)=>`https://github.com/$<owner>/$<repo>/${kind}/$<version>/`;
-const ghTemplate = `<a href="${ghBase("tree")}">gh/$<owner>/$<repo>@$<version>/</a>` + `<a href="${ghBase("blob")}$<file>">$<file></a>`;
-const vRe = /"\/(?<version>v\d+)\/(?<url>.*)"/;
-const vTemplate = `<a href="https://esm.sh/$<version>/$<url>">$&</a>`;
-const linkifyEsmSh = (text)=>{
-    const [head, ...lines] = text.split("\n");
-    return [
-        head.replace(ghRe, ghTemplate),
-        ...lines.map((line)=>line.replace(vRe, vTemplate))
-    ].join("\n");
-};
-const pre = document.querySelector("pre");
-pre.innerHTML = linkifyEsmSh(pre.innerHTML);
-
+	"use strict"
+	const ghRe = /gh\/(?<owner>[^/]+)\/(?<repo>[^@]+)@(?<version>[^/]+)\/(?<file>[^ ]+)/
+	const ghBase = (kind) => `https://github.com/$<owner>/$<repo>/${kind}/$<version>/`
+	const ghTemplate = `<a href="${ghBase("tree")}">gh/$<owner>/$<repo>@$<version>/</a>` +
+		`<a href="${ghBase("blob")}$<file>">$<file></a>`
+	const vRe = /"\/(?<version>v\d+)\/(?<url>.*)"/
+	const vTemplate = `<a href="https://esm.sh/$<version>/$<url>">$&</a>`
+	const linkifyEsmSh = (text) => {
+		const [head, ...lines] = text.split("\n")
+		return [
+			head.replace(ghRe, ghTemplate),
+			...lines.map((line) => line.replace(vRe, vTemplate)),
+		].join("\n")
+	}
+	const pre = document.querySelector("pre")
+	pre.innerHTML = linkifyEsmSh(pre.innerHTML)
 }
