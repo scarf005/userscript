@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         로갤 말머리 태그
 // @namespace    https://github.com/scarf005
-// @version      0.4.0
+// @version      0.5.0
 // @description  제목별 태그 및 말머리 추가
 // @author       scarf005
 // @match        https://gall.dcinside.com/*
@@ -53,6 +53,7 @@ const main = () => {
 	const tagPreset = {
 		엘린: /ㅇㄹ/,
 		돌죽: /ㄷㅈ/,
+		동방죽: /동방죽/,
 		톰죽: /(톰죽|ㅌㅈ|tome4?)/,
 		밝밤: /(카타클|ㅋㅌㅋ)?\s*(ㅂㅂ|밝밤|bn)/,
 		dda: /(카타클|ㅋㅌㅋ)?\s*(어둠밤|dda)/,
