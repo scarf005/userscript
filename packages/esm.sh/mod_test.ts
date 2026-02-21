@@ -15,3 +15,15 @@ export { default } from <a href="https://esm.sh/v135/gh/scarf005/typed_regex@0.2
 Deno.test("linkifyEsmSh() adds anchor to code", () => {
 	assertEquals(linkifyEsmSh(given), expected)
 })
+
+const givenJsr = `\
+/* esm.sh - @jsr/scarf__conventional-prs@0.1.1 */
+export * from "/@jsr/scarf__conventional-prs@0.1.1/es2022/scarf__conventional-prs.mjs";`
+
+const expectedJsr = /*html*/ `\
+/* esm.sh - @jsr/scarf__conventional-prs@0.1.1 */
+export * from <a href="https://esm.sh/@jsr/scarf__conventional-prs@0.1.1/es2022/scarf__conventional-prs.mjs">"/@jsr/scarf__conventional-prs@0.1.1/es2022/scarf__conventional-prs.mjs"</a>;`
+
+Deno.test("linkifyEsmSh() adds anchor to @jsr import path", () => {
+	assertEquals(linkifyEsmSh(givenJsr), expectedJsr)
+})

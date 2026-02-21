@@ -6,7 +6,7 @@
 // @namespace      https://github.com/scarf005
 // @description    add links to esm.sh imports
 // @description:ko esm.sh import 구문에 링크를 추가합니다.
-// @version        0.0.0
+// @version        0.0.1
 // @homepageURL    https://github.com/scarf005/userscript
 // @supportURL     https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc
 // @downloadURL    https://raw.githubusercontent.com/scarf005/userscript/main/dist/esm.sh.user.js
@@ -17,13 +17,13 @@
 const ghRe = /gh\/(?<owner>[^/]+)\/(?<repo>[^@]+)@(?<version>[^/]+)\/(?<file>[^ ]+)/;
 const ghBase = (kind)=>`https://github.com/$<owner>/$<repo>/${kind}/$<version>/`;
 const ghTemplate = `<a href="${ghBase("tree")}">gh/$<owner>/$<repo>@$<version>/</a>` + `<a href="${ghBase("blob")}$<file>">$<file></a>`;
-const vRe = /"\/(?<version>v\d+)\/(?<url>.*)"/;
-const vTemplate = `<a href="https://esm.sh/$<version>/$<url>">$&</a>`;
+const esmPathRe = /"(?<path>\/[^"]+)"/g;
+const esmPathTemplate = `<a href="https://esm.sh$<path>">$&</a>`;
 const linkifyEsmSh = (text)=>{
     const [head, ...lines] = text.split("\n");
     return [
         head.replace(ghRe, ghTemplate),
-        ...lines.map((line)=>line.replace(vRe, vTemplate))
+        ...lines.map((line)=>line.replace(esmPathRe, esmPathTemplate))
     ].join("\n");
 };
 const pre = document.querySelector("pre");

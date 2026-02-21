@@ -9,7 +9,7 @@ const metadata = metadataBlock({
 		namespace: "https://github.com/scarf005",
 		description: "add links to esm.sh imports",
 		"description:ko": "esm.sh import 구문에 링크를 추가합니다.",
-		version: "0.0.0",
+		version: "0.0.1",
 		homepageURL: new URL("https://github.com/scarf005/userscript"),
 		supportURL: new URL(
 			"https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc",
