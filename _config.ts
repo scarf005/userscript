@@ -2,6 +2,7 @@ import lume from "lume/mod.ts"
 import basePath from "lume/plugins/base_path.ts"
 import multilanguage from "lume/plugins/multilanguage.ts"
 import pagefind from "lume/plugins/pagefind.ts"
+import relativeUrls from "lume/plugins/relative_urls.ts"
 
 const site = lume({
 	src: "./web",
@@ -33,5 +34,7 @@ site.use(pagefind({
 		verbose: false,
 	},
 }))
+
+site.use(relativeUrls())
 
 export default site

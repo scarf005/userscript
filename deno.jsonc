@@ -3,7 +3,7 @@
 		"build": "find packages -name 'build.ts' | xargs deno run -A",
 		"lume": "echo \"import 'lume/cli.ts'\" | deno run -A -",
 		"site:build": "deno task lume",
-		"site:serve": "deno task lume -s"
+		"serve": "deno task lume -s"
 	},
 	"imports": {
 		"lume/": "https://deno.land/x/lume@v3.0.0/"
