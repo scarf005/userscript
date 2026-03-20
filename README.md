@@ -7,17 +7,17 @@
 <img width="40%" height="300" alt="image" src="https://github.com/user-attachments/assets/f2b543ed-26ce-49e3-bdaf-214ba97132ce" />
 
 1. 유저스크립트 (예: [tampermonkey](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=ko), [violentmonkey](https://violentmonkey.github.io)) 확장 프로그램 설치
-2. 아래 목록에서 원하는 스크립트 버튼
+2. 아래 목록에서 원하는 스크립트 버튼 찾아 선택
 
-<img width="50%" height="1325" alt="image" src="https://github.com/user-attachments/assets/7815ab9a-631f-4ce0-8acf-82c42491a582" />
+<img width="50%" height="1325" alt="image" src="https://github.com/user-attachments/assets/4c75d0d7-45e1-425b-aa04-e3f1e9807f23" />
 
-3. `raw` 버튼을 눌러 설치
+3. `install` 버튼을 눌러 설치
 
 <img width="800" height="300" alt="image" src="https://github.com/user-attachments/assets/e826ed50-827d-419a-8e66-e7d4ad983785" />
 
 4. 업데이트 시 톱니바퀴 버튼 -> 회전 아이콘 눌러 업데이트
 
-## 유저스크립트
+## 유저스크립트 목록
 
 ### 로그라이크 갤러리 말머리 태그
 
