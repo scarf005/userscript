@@ -30,17 +30,29 @@ const text = {
 		searchHint: "Search across script metadata and guide text.",
 		installGuideTitle: "Install guide",
 		installGuideSteps: [
-			"Install a userscript manager extension (<a href=\"https://violentmonkey.github.io/get-it/\" target=\"_blank\" rel=\"noreferrer\">Install manager extension</a>).",
+			'Install a userscript manager extension (<a href="https://violentmonkey.github.io/get-it/" target="_blank" rel="noreferrer">Install manager extension</a>).',
 			"Open this catalog and find your target script card.",
 			"Press install and approve in your userscript manager.",
 			"If a script source page opens, continue with install in your manager dialog.",
 		],
 		guideVisualTitle: "Step-by-step screenshots",
 		guideVisuals: [
-			{ title: "Step 1 · Install manager extension", file: `/assets/guide/step-1-manager.webp?v=${guideVersion}` },
-			{ title: "Step 2 · Find script card", file: `/assets/guide/step-2-catalog.webp?v=${guideVersion}` },
-			{ title: "Step 3 · Click install button", file: `/assets/guide/step-3-install-target.webp?v=${guideVersion}` },
-			{ title: "Step 4 · Violentmonkey install page", file: `/assets/guide/step-4-install-source.webp?v=${guideVersion}` },
+			{
+				title: "Step 1 · Install manager extension",
+				file: `/assets/guide/step-1-manager.webp?v=${guideVersion}`,
+			},
+			{
+				title: "Step 2 · Find script card",
+				file: `/assets/guide/step-2-catalog.webp?v=${guideVersion}`,
+			},
+			{
+				title: "Step 3 · Click install button",
+				file: `/assets/guide/step-3-install-target.webp?v=${guideVersion}`,
+			},
+			{
+				title: "Step 4 · Violentmonkey install page",
+				file: `/assets/guide/step-4-install-source.webp?v=${guideVersion}`,
+			},
 		],
 		metaId: "id",
 		metaVersion: "version",
@@ -64,17 +76,29 @@ const text = {
 		searchHint: "스크립트 메타데이터와 가이드 내용을 검색합니다.",
 		installGuideTitle: "설치 가이드",
 		installGuideSteps: [
-			"유저스크립트 매니저 확장을 설치합니다 (<a href=\"https://violentmonkey.github.io/get-it/\" target=\"_blank\" rel=\"noreferrer\">Install manager extension</a>).",
+			'유저스크립트 매니저 확장을 설치합니다 (<a href="https://violentmonkey.github.io/get-it/" target="_blank" rel="noreferrer">Install manager extension</a>).',
 			"카탈로그에서 원하는 스크립트 카드를 찾습니다.",
 			"설치 버튼을 누른 뒤 매니저에서 승인합니다.",
 			"스크립트 소스 페이지가 열리면 매니저 설치 대화상자를 진행합니다.",
 		],
 		guideVisualTitle: "스크린샷 단계 안내",
 		guideVisuals: [
-			{ title: "1단계 · 매니저 확장 설치", file: `/assets/guide/step-1-manager.webp?v=${guideVersion}` },
-			{ title: "2단계 · 카탈로그에서 스크립트 찾기", file: `/assets/guide/step-2-catalog.webp?v=${guideVersion}` },
-			{ title: "3단계 · 설치 버튼 클릭", file: `/assets/guide/step-3-install-target.webp?v=${guideVersion}` },
-			{ title: "4단계 · Violentmonkey 설치 페이지", file: `/assets/guide/step-4-install-source.webp?v=${guideVersion}` },
+			{
+				title: "1단계 · 매니저 확장 설치",
+				file: `/assets/guide/step-1-manager.webp?v=${guideVersion}`,
+			},
+			{
+				title: "2단계 · 카탈로그에서 스크립트 찾기",
+				file: `/assets/guide/step-2-catalog.webp?v=${guideVersion}`,
+			},
+			{
+				title: "3단계 · 설치 버튼 클릭",
+				file: `/assets/guide/step-3-install-target.webp?v=${guideVersion}`,
+			},
+			{
+				title: "4단계 · Violentmonkey 설치 페이지",
+				file: `/assets/guide/step-4-install-source.webp?v=${guideVersion}`,
+			},
 		],
 		metaId: "id",
 		metaVersion: "버전",
@@ -101,14 +125,20 @@ const renderMatches = (matches: string[]) => {
 const renderCard = (script: UserScriptEntry, locale: Locale) => {
 	const copy = text[locale]
 	const support = script.supportURL
-		? `<a href="${escapeHtml(script.supportURL)}" target="_blank" rel="noreferrer">${copy.support}</a>`
+		? `<a href="${
+			escapeHtml(script.supportURL)
+		}" target="_blank" rel="noreferrer">${copy.support}</a>`
 		: ""
 
 	return `
 		<li>
-			<article class="script-card" data-card data-search="${escapeHtml(`${script.name} ${script.description} ${script.id}`.toLowerCase())}" data-pagefind-body>
+			<article class="script-card" data-card data-search="${
+		escapeHtml(`${script.name} ${script.description} ${script.id}`.toLowerCase())
+	}" data-pagefind-body>
 				<header class="card-header">
-					<img class="script-favicon" src="${escapeHtml(script.faviconURL)}" alt="" width="20" height="20" loading="lazy" onerror="this.onerror=null;this.src='https://www.google.com/s2/favicons?sz=64&domain=github.com'">
+					<img class="script-favicon" src="${
+		escapeHtml(script.faviconURL)
+	}" alt="" width="20" height="20" loading="lazy" onerror="this.onerror=null;this.src='https://www.google.com/s2/favicons?sz=64&domain=github.com'">
 					<h2>${escapeHtml(script.name)}</h2>
 				</header>
 				<p>${escapeHtml(script.description)}</p>
@@ -129,7 +159,10 @@ const renderCard = (script: UserScriptEntry, locale: Locale) => {
 	`
 }
 
-export const renderCatalogPage = ({ userscripts }: { userscripts: UserScriptEntry[] }, locale: Locale) => {
+export const renderCatalogPage = (
+	{ userscripts }: { userscripts: UserScriptEntry[] },
+	locale: Locale,
+) => {
 	const copy = text[locale]
 	const repoUrl = "https://github.com/scarf005/userscript"
 	const languageSwitcher = locale === "en"
