@@ -38,6 +38,7 @@ if (!existingOverlay) {
 
 		#${overlayId} button {
 			border: 0;
+			border-radius: 0;
 			background: rgba(255, 255, 255, 0.14);
 			color: inherit;
 			cursor: pointer;
@@ -62,7 +63,7 @@ if (!existingOverlay) {
 
 		#${overlayId} .itch-jam-gallery__counter {
 			padding: 8px 12px;
-			border-radius: 999px;
+			border-radius: 0;
 			background: rgba(255, 255, 255, 0.14);
 			font-size: 14px;
 		}
@@ -70,7 +71,7 @@ if (!existingOverlay) {
 		#${overlayId} .itch-jam-gallery__close {
 			width: 40px;
 			height: 40px;
-			border-radius: 999px;
+			border-radius: 0;
 			font-size: 24px;
 			line-height: 1;
 		}
@@ -78,7 +79,7 @@ if (!existingOverlay) {
 		#${overlayId} .itch-jam-gallery__stage {
 			position: relative;
 			min-height: 0;
-			border-radius: 20px;
+			border-radius: 0;
 			overflow: hidden;
 			background: rgba(255, 255, 255, 0.05);
 			box-shadow: 0 20px 80px rgba(0, 0, 0, 0.45);
@@ -120,11 +121,10 @@ if (!existingOverlay) {
 			top: 50%;
 			transform: translateY(-50%);
 			padding: 14px 18px;
-			border-radius: 999px;
+			border-radius: 0;
 			background: rgba(0, 0, 0, 0.35);
 			font-size: 28px;
-			opacity: 0;
-			transition: opacity 120ms ease;
+			opacity: 1;
 		}
 
 		#${overlayId} .itch-jam-gallery__nav--prev::after {
@@ -137,10 +137,6 @@ if (!existingOverlay) {
 			right: 16px;
 		}
 
-		#${overlayId} .itch-jam-gallery__stage:hover .itch-jam-gallery__nav::after {
-			opacity: 1;
-		}
-
 		@media (max-width: 640px) {
 			#${overlayId} .itch-jam-gallery__frame {
 				width: 100vw;
@@ -150,7 +146,7 @@ if (!existingOverlay) {
 			}
 
 			#${overlayId} .itch-jam-gallery__stage {
-				border-radius: 16px;
+				border-radius: 0;
 			}
 
 			#${overlayId} .itch-jam-gallery__hint {
