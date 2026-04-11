@@ -1,6 +1,6 @@
 {
 	"tasks": {
-		"build": "find packages -name 'build.ts' | xargs deno run -A",
+		"build": "deno run -A ./packages/build.ts",
 		"lume": "echo \"import 'lume/cli.ts'\" | deno run -A -",
 		"site:build": "deno task lume",
 		"serve": "deno task lume -s"

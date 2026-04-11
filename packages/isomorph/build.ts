@@ -2,6 +2,7 @@ import { resolve } from "https://deno.land/std@0.220.1/path/resolve.ts"
 
 import { bundleUserScript } from "../../build.ts"
 import { metadataBlock } from "../../userscript.ts"
+import type { UserscriptPackage } from "../types.ts"
 
 const metadata = metadataBlock({
 	entries: {
@@ -24,7 +25,21 @@ const metadata = metadataBlock({
 	},
 })
 
-if (import.meta.main) {
+const output = resolve(import.meta.dirname!, "../../dist/isomorph.user.js")
+
+const build = async () => {
 	const code = await bundleUserScript({ url: import.meta.resolve("./mod.ts"), metadata })
-	await Deno.writeTextFile(resolve(import.meta.dirname!, "../../dist/isomorph.user.js"), code)
+	await Deno.writeTextFile(output, code)
+	return code
+}
+
+export const userscriptPackage = {
+	id: "isomorph",
+	buildFile: new URL(import.meta.url),
+	output,
+	build,
+} satisfies UserscriptPackage
+
+if (import.meta.main) {
+	await userscriptPackage.build()
 }

@@ -6,26 +6,30 @@ import type { UserscriptPackage } from "../types.ts"
 
 const metadata = metadataBlock({
 	entries: {
-		name: "itch.io jam screenshot gallery",
-		"name:ko": "itch.io 잼 스크린샷 갤러리",
+		name: "YouTube subtitle metric append",
+		"name:ko": "YouTube 자막 미터법 보조",
 		namespace: "https://github.com/scarf005",
-		description: "open jam screenshots in an in-page gallery with keyboard and click navigation",
-		"description:ko": "itch.io 잼 스크린샷을 페이지 안 갤러리로 열고 키보드와 클릭으로 넘깁니다.",
-		version: "0.1.0",
+		description: "append SI conversions to explicit US customary units in YouTube subtitles live",
+		"description:ko": "YouTube 자막의 명시적 미국 단위를 실시간으로 SI 단위와 함께 표시합니다.",
+		version: "0.2.0",
 		homepageURL: new URL("https://github.com/scarf005/userscript"),
 		supportURL: new URL(
 			"https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc",
 		),
 		downloadURL: new URL(
-			"https://raw.githubusercontent.com/scarf005/userscript/main/dist/itch-jam-gallery.user.js",
+			"https://raw.githubusercontent.com/scarf005/userscript/main/dist/youtube-si-subtitles.user.js",
 		),
 	},
 	resources: {
-		match: ["https://itch.io/*"],
+		match: [
+			"https://www.youtube.com/*",
+			"https://m.youtube.com/*",
+			"https://music.youtube.com/*",
+		],
 	},
 })
 
-const output = resolve(import.meta.dirname!, "../../dist/itch-jam-gallery.user.js")
+const output = resolve(import.meta.dirname!, "../../dist/youtube-si-subtitles.user.js")
 
 const build = async () => {
 	const code = await bundleUserScript({ url: import.meta.resolve("./mod.ts"), metadata })
@@ -34,7 +38,7 @@ const build = async () => {
 }
 
 export const userscriptPackage = {
-	id: "itch-jam-gallery",
+	id: "youtube-si-subtitles",
 	buildFile: new URL(import.meta.url),
 	output,
 	build,

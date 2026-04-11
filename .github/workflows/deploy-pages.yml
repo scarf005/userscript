@@ -6,9 +6,10 @@ on:
       - main
     paths:
       - "_config.ts"
+      - "packages/**"
       - "web/**"
-      - "dist/**"
       - "deno.jsonc"
+      - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
 permissions:

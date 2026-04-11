@@ -1,3 +1,5 @@
+import { userscriptPackages } from "../../packages/registry.ts"
+
 type UserScriptEntry = {
 	id: string
 	name: string
@@ -114,7 +116,7 @@ const chooseDescription = (metadata: Record<string, string | string[]>) => {
 }
 
 const normalizeEntry = (
-	fileName: string,
+	id: string,
 	metadata: Record<string, string | string[]>,
 ): UserScriptEntry | null => {
 	const downloadURL = metadata.downloadURL
@@ -150,7 +152,7 @@ const normalizeEntry = (
 	}
 
 	return {
-		id: fileName.replace(/\.user\.js$/u, ""),
+		id,
 		name: chooseName(metadata),
 		description: chooseDescription(metadata),
 		version: typeof version === "string" ? version : "0.0.0",
@@ -162,24 +164,17 @@ const normalizeEntry = (
 }
 
 const loadUserscripts = async (): Promise<UserScriptEntry[]> => {
-	const entries: UserScriptEntry[] = []
-
-	for await (const dirEntry of Deno.readDir("./dist")) {
-		if (!dirEntry.isFile || !dirEntry.name.endsWith(".user.js")) {
-			continue
-		}
-
-		const source = await Deno.readTextFile(`./dist/${dirEntry.name}`)
+	const entries = await Promise.all(userscriptPackages.map(async ({ id, output }) => {
+		const source = await Deno.readTextFile(output)
 		const metadata = parseMetadata(source)
-		if (!metadata) continue
+		if (!metadata) return null
 
-		const normalized = normalizeEntry(dirEntry.name, metadata)
-		if (!normalized) continue
+		return normalizeEntry(id, metadata)
+	}))
 
-		entries.push(normalized)
-	}
-
-	return entries.sort((left, right) => left.name.localeCompare(right.name, "en"))
+	return entries
+		.filter((entry): entry is UserScriptEntry => entry !== null)
+		.sort((left, right) => left.name.localeCompare(right.name, "en"))
 }
 
 export default await loadUserscripts()
