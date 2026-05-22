@@ -124,8 +124,5 @@ const install = ()=>{
 if (typeof document !== "undefined") {
     install();
 }
-export { isDcinsideHost as isDcinsideHost };
-export { resolveHttpUrl as resolveHttpUrl };
-export { shouldBypassHref as shouldBypassHref };
 
 }
