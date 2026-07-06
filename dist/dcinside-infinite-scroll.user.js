@@ -6,7 +6,7 @@
 // @namespace      https://github.com/scarf005
 // @description    append dcinside gallery list pages every 3 seconds while enabled
 // @description:ko 켜져 있는 동안 디시인사이드 갤러리 목록 다음 페이지를 3초마다 이어 붙입니다.
-// @version        0.1.0
+// @version        0.1.1
 // @homepageURL    https://github.com/scarf005/userscript
 // @supportURL     https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc
 // @downloadURL    https://raw.githubusercontent.com/scarf005/userscript/main/dist/dcinside-infinite-scroll.user.js
@@ -28,7 +28,7 @@ const state = {
     loadedPages: 0,
     nextUrl: null,
     timer: null,
-    seenPostNos: new Set()
+    seenResultKeys: new Set()
 };
 const readEnabled = ()=>{
     try {
@@ -84,25 +84,44 @@ const nextRegularPageUrl = (url)=>{
 const getNextUrl = (root, baseUrl)=>{
     return nextSearchUrl(root, baseUrl) ?? nextRegularPageUrl(baseUrl);
 };
-const collectSeenPostNos = ()=>{
+const getCommentRow = (row)=>{
+    const next = row.nextElementSibling;
+    return next instanceof HTMLTableRowElement && next.matches("tr.search.search_comment[data-cmt]") ? next : null;
+};
+const getResultKey = (row)=>{
+    const postNo = row.dataset.no?.trim();
+    const commentId = getCommentRow(row)?.dataset.cmt?.trim();
+    if (commentId) return `comment:${commentId}`;
+    return postNo ? `post:${postNo}` : null;
+};
+const markLoaded = (row)=>{
+    row.setAttribute(`data-${scriptId}-loaded`, "true");
+};
+const collectSeenResults = ()=>{
     document.querySelectorAll(".gall_listwrap.list tr.ub-content[data-no]").forEach((row)=>{
-        const postNo = row.dataset.no?.trim();
-        if (postNo) state.seenPostNos.add(postNo);
+        const key = getResultKey(row);
+        if (key) state.seenResultKeys.add(key);
     });
 };
-const appendRows = (doc)=>{
+const appendResultRows = (doc)=>{
     const body = getListBody(document);
     const sourceBody = getListBody(doc);
     if (!body || !sourceBody) return 0;
     let appended = 0;
     const rows = sourceBody.querySelectorAll("tr.ub-content[data-no]");
     rows.forEach((row)=>{
-        const postNo = row.dataset.no?.trim();
-        if (!postNo || state.seenPostNos.has(postNo)) return;
-        state.seenPostNos.add(postNo);
+        const key = getResultKey(row);
+        if (!key || state.seenResultKeys.has(key)) return;
+        state.seenResultKeys.add(key);
         const nextRow = document.importNode(row, true);
-        nextRow.setAttribute(`data-${scriptId}-loaded`, "true");
+        markLoaded(nextRow);
         body.append(nextRow);
+        const commentRow = getCommentRow(row);
+        if (commentRow) {
+            const nextCommentRow = document.importNode(commentRow, true);
+            markLoaded(nextCommentRow);
+            body.append(nextCommentRow);
+        }
         appended += 1;
     });
     if (appended > 0) {
@@ -129,7 +148,7 @@ const crawlNext = async ()=>{
         const html = await response.text();
         const doc = new DOMParser().parseFromString(html, "text/html");
         const nextUrl = getNextUrl(doc, url);
-        const appended = appendRows(doc);
+        const appended = appendResultRows(doc);
         state.loadedPages += 1;
         state.nextUrl = nextUrl !== url ? nextUrl : null;
         if (!state.nextUrl && appended === 0) {
@@ -146,7 +165,7 @@ const crawlNext = async ()=>{
 const start = ()=>{
     if (state.enabled) return;
     state.enabled = true;
-    collectSeenPostNos();
+    collectSeenResults();
     state.nextUrl = getNextUrl(document, window.location.href);
     writeEnabled(true);
     setStatus("켜짐");

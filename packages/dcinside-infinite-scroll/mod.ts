@@ -19,7 +19,7 @@ type CrawlState = {
 	loadedPages: number
 	nextUrl: string | null
 	timer: number | null
-	seenPostNos: Set<string>
+	seenResultKeys: Set<string>
 }
 
 const localDcinsideWindow = window as DcinsideWindow
@@ -30,7 +30,7 @@ const state: CrawlState = {
 	loadedPages: 0,
 	nextUrl: null,
 	timer: null,
-	seenPostNos: new Set(),
+	seenResultKeys: new Set(),
 }
 
 const readEnabled = () => {
@@ -102,15 +102,33 @@ const getNextUrl = (root: ParentNode, baseUrl: string) => {
 	return nextSearchUrl(root, baseUrl) ?? nextRegularPageUrl(baseUrl)
 }
 
-const collectSeenPostNos = () => {
+const getCommentRow = (row: HTMLTableRowElement) => {
+	const next = row.nextElementSibling
+	return next instanceof HTMLTableRowElement && next.matches("tr.search.search_comment[data-cmt]")
+		? next
+		: null
+}
+
+const getResultKey = (row: HTMLTableRowElement) => {
+	const postNo = row.dataset.no?.trim()
+	const commentId = getCommentRow(row)?.dataset.cmt?.trim()
+	if (commentId) return `comment:${commentId}`
+	return postNo ? `post:${postNo}` : null
+}
+
+const markLoaded = (row: HTMLTableRowElement) => {
+	row.setAttribute(`data-${scriptId}-loaded`, "true")
+}
+
+const collectSeenResults = () => {
 	document.querySelectorAll<HTMLTableRowElement>(".gall_listwrap.list tr.ub-content[data-no]")
 		.forEach((row) => {
-			const postNo = row.dataset.no?.trim()
-			if (postNo) state.seenPostNos.add(postNo)
+			const key = getResultKey(row)
+			if (key) state.seenResultKeys.add(key)
 		})
 }
 
-const appendRows = (doc: Document) => {
+const appendResultRows = (doc: Document) => {
 	const body = getListBody(document)
 	const sourceBody = getListBody(doc)
 	if (!body || !sourceBody) return 0
@@ -118,13 +136,21 @@ const appendRows = (doc: Document) => {
 	let appended = 0
 	const rows = sourceBody.querySelectorAll<HTMLTableRowElement>("tr.ub-content[data-no]")
 	rows.forEach((row) => {
-		const postNo = row.dataset.no?.trim()
-		if (!postNo || state.seenPostNos.has(postNo)) return
+		const key = getResultKey(row)
+		if (!key || state.seenResultKeys.has(key)) return
 
-		state.seenPostNos.add(postNo)
+		state.seenResultKeys.add(key)
 		const nextRow = document.importNode(row, true)
-		nextRow.setAttribute(`data-${scriptId}-loaded`, "true")
+		markLoaded(nextRow)
 		body.append(nextRow)
+
+		const commentRow = getCommentRow(row)
+		if (commentRow) {
+			const nextCommentRow = document.importNode(commentRow, true)
+			markLoaded(nextCommentRow)
+			body.append(nextCommentRow)
+		}
+
 		appended += 1
 	})
 
@@ -155,7 +181,7 @@ const crawlNext = async () => {
 		const html = await response.text()
 		const doc = new DOMParser().parseFromString(html, "text/html")
 		const nextUrl = getNextUrl(doc, url)
-		const appended = appendRows(doc)
+		const appended = appendResultRows(doc)
 
 		state.loadedPages += 1
 		state.nextUrl = nextUrl !== url ? nextUrl : null
@@ -177,7 +203,7 @@ const start = () => {
 	if (state.enabled) return
 
 	state.enabled = true
-	collectSeenPostNos()
+	collectSeenResults()
 	state.nextUrl = getNextUrl(document, window.location.href)
 	writeEnabled(true)
 	setStatus("켜짐")

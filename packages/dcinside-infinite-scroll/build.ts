@@ -12,7 +12,7 @@ const metadata = metadataBlock({
 		description: "append dcinside gallery list pages every 3 seconds while enabled",
 		"description:ko":
 			"켜져 있는 동안 디시인사이드 갤러리 목록 다음 페이지를 3초마다 이어 붙입니다.",
-		version: "0.1.0",
+		version: "0.1.1",
 		homepageURL: new URL("https://github.com/scarf005/userscript"),
 		supportURL: new URL(
 			"https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc",
