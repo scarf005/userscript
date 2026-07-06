@@ -1,3 +1,4 @@
+import { userscriptPackage as dcinsideInfiniteScroll } from "./dcinside-infinite-scroll/build.ts"
 import { userscriptPackage as dcinsideOutlinkBypass } from "./dcinside-outlink-bypass/build.ts"
 import { userscriptPackage as esmSh } from "./esm.sh/build.ts"
 import { userscriptPackage as isomorph } from "./isomorph/build.ts"
@@ -7,6 +8,7 @@ import { userscriptPackage as youtubeSiSubtitles } from "./youtube-si-subtitles/
 import type { UserscriptPackage } from "./types.ts"
 
 export const userscriptPackages = [
+	dcinsideInfiniteScroll,
 	dcinsideOutlinkBypass,
 	esmSh,
 	isomorph,
