@@ -1,19 +1,3 @@
-// ==UserScript==
-// @name         로갤 말머리 태그
-// @namespace    https://github.com/scarf005
-// @version      0.5.0
-// @description  제목별 태그 및 말머리 추가
-// @author       scarf005
-// @match        https://gall.dcinside.com/*
-// @match        https://m.dcinside.com/*/rlike*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=github.com
-// @homepageURL  https://github.com/scarf005/userscript
-// @supportURL   https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc
-// @downloadURL  https://raw.githubusercontent.com/scarf005/userscript/main/dist/roguelike_tag.user.js
-// @license      AGPL-3.0-only
-// @grant        GM_addStyle
-// ==/UserScript==
-
 // @ts-check
 const main = () => {
 	"use strict"

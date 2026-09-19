@@ -12,6 +12,7 @@ const site = lume({
 })
 
 site.add("assets")
+site.add("dist")
 site.add("favicon.svg")
 
 site.use(basePath())

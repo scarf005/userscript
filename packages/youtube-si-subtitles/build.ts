@@ -11,13 +11,13 @@ const metadata = metadataBlock({
 		namespace: "https://github.com/scarf005",
 		description: "append SI conversions to explicit US customary units in YouTube subtitles live",
 		"description:ko": "YouTube 자막의 명시적 미국 단위를 실시간으로 SI 단위와 함께 표시합니다.",
-		version: "0.2.0",
+		version: "0.2.1",
 		homepageURL: new URL("https://github.com/scarf005/userscript"),
 		supportURL: new URL(
 			"https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc",
 		),
 		downloadURL: new URL(
-			"https://raw.githubusercontent.com/scarf005/userscript/main/dist/youtube-si-subtitles.user.js",
+			"https://scarf005.github.io/userscript/dist/youtube-si-subtitles.user.js",
 		),
 	},
 	resources: {
@@ -29,7 +29,7 @@ const metadata = metadataBlock({
 	},
 })
 
-const output = resolve(import.meta.dirname!, "../../dist/youtube-si-subtitles.user.js")
+const output = resolve(import.meta.dirname!, "../../web/dist/youtube-si-subtitles.user.js")
 
 const build = async () => {
 	const code = await bundleUserScript({ url: import.meta.resolve("./mod.ts"), metadata })

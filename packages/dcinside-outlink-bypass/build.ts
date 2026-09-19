@@ -11,13 +11,13 @@ const metadata = metadataBlock({
 		namespace: "https://github.com/scarf005",
 		description: "open external links on dcinside directly without the warning modal",
 		"description:ko": "디시인사이드 외부 링크를 경고 모달 없이 바로 엽니다.",
-		version: "0.1.0",
+		version: "0.1.1",
 		homepageURL: new URL("https://github.com/scarf005/userscript"),
 		supportURL: new URL(
 			"https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc",
 		),
 		downloadURL: new URL(
-			"https://raw.githubusercontent.com/scarf005/userscript/main/dist/dcinside-outlink-bypass.user.js",
+			"https://scarf005.github.io/userscript/dist/dcinside-outlink-bypass.user.js",
 		),
 		"run-at": "document-start",
 	},
@@ -26,7 +26,7 @@ const metadata = metadataBlock({
 	},
 })
 
-const output = resolve(import.meta.dirname!, "../../dist/dcinside-outlink-bypass.user.js")
+const output = resolve(import.meta.dirname!, "../../web/dist/dcinside-outlink-bypass.user.js")
 
 const build = async () => {
 	const code = await bundleUserScript({ url: import.meta.resolve("./mod.ts"), metadata })

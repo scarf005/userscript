@@ -11,13 +11,13 @@ const metadata = metadataBlock({
 		namespace: "https://github.com/scarf005",
 		description: "add links to esm.sh imports",
 		"description:ko": "esm.sh import 구문에 링크를 추가합니다.",
-		version: "0.0.1",
+		version: "0.0.2",
 		homepageURL: new URL("https://github.com/scarf005/userscript"),
 		supportURL: new URL(
 			"https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc",
 		),
 		downloadURL: new URL(
-			"https://raw.githubusercontent.com/scarf005/userscript/main/dist/esm.sh.user.js",
+			"https://scarf005.github.io/userscript/dist/esm.sh.user.js",
 		),
 	},
 	resources: {
@@ -25,7 +25,7 @@ const metadata = metadataBlock({
 	},
 })
 
-const output = resolve(import.meta.dirname!, "../../dist/esm.sh.user.js")
+const output = resolve(import.meta.dirname!, "../../web/dist/esm.sh.user.js")
 
 const build = async () => {
 	const code = await bundleUserScript({ url: import.meta.resolve("./mod.ts"), metadata })

@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - "_config.ts"
+      - "build.ts"
+      - "userscript.ts"
+      - "langauge.ts"
       - "packages/**"
       - "web/**"
       - "deno.jsonc"
@@ -32,6 +35,7 @@ jobs:
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
+          cache: true
 
       - name: Build userscripts and website
         run: deno task build && deno task site:build

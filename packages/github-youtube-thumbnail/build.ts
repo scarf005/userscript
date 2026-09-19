@@ -12,13 +12,13 @@ const metadata = metadataBlock({
 		description: "convert pasted YouTube video links into clickable thumbnail Markdown on GitHub",
 		"description:ko":
 			"GitHub에 YouTube 동영상 링크를 붙여넣으면 클릭 가능한 썸네일 Markdown으로 변환합니다.",
-		version: "0.1.0",
+		version: "0.1.1",
 		homepageURL: new URL("https://github.com/scarf005/userscript"),
 		supportURL: new URL(
 			"https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc",
 		),
 		downloadURL: new URL(
-			"https://raw.githubusercontent.com/scarf005/userscript/main/dist/github-youtube-thumbnail.user.js",
+			"https://scarf005.github.io/userscript/dist/github-youtube-thumbnail.user.js",
 		),
 	},
 	resources: {
@@ -26,7 +26,7 @@ const metadata = metadataBlock({
 	},
 })
 
-const output = resolve(import.meta.dirname!, "../../dist/github-youtube-thumbnail.user.js")
+const output = resolve(import.meta.dirname!, "../../web/dist/github-youtube-thumbnail.user.js")
 
 const build = async () => {
 	const code = await bundleUserScript({ url: import.meta.resolve("./mod.ts"), metadata })

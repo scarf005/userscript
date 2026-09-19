@@ -40,7 +40,9 @@ export type MetadataEntries =
 	& MetadataName
 	& MetadataDescription
 	& {
+		author?: string
 		icon?: URL
+		license?: string
 		version: `${number}.${number}.${number}`
 
 		namespace?: string | URL
@@ -86,15 +88,15 @@ export const metadataBlock = (option: Option) => {
 if (import.meta.main) {
 	const homepageHost = new URL("https://github.com/scarf005")
 	const homepageURL = new URL(`${homepageHost}/userscript`)
-	const downloadHost = new URL("https://raw.githubusercontent.com/scarf005")
+	const downloadHost = new URL("https://scarf005.github.io")
 	const issues = new URLSearchParams({ q: "is:issue+is:open+sort:updated-desc" })
 
-	const downloadURL = new URL(`${downloadHost}/userscript/main/dist/roguelike_tag.user.js`)
+	const downloadURL = new URL(`${downloadHost}/userscript/dist/roguelike_tag.user.js`)
 	const meta = metadataBlock({
 		entries: {
 			name: "로갤 말머리 태그",
 			namespace: "scarf",
-			version: "0.2.0",
+			version: "0.5.1",
 			description: "제목별 태그 추가",
 			homepageURL,
 			supportURL: new URL(`${homepageURL}?${issues}`),

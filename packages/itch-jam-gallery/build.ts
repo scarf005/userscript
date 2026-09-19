@@ -11,13 +11,13 @@ const metadata = metadataBlock({
 		namespace: "https://github.com/scarf005",
 		description: "open jam screenshots in an in-page gallery with keyboard and click navigation",
 		"description:ko": "itch.io 잼 스크린샷을 페이지 안 갤러리로 열고 키보드와 클릭으로 넘깁니다.",
-		version: "0.1.0",
+		version: "0.1.1",
 		homepageURL: new URL("https://github.com/scarf005/userscript"),
 		supportURL: new URL(
 			"https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc",
 		),
 		downloadURL: new URL(
-			"https://raw.githubusercontent.com/scarf005/userscript/main/dist/itch-jam-gallery.user.js",
+			"https://scarf005.github.io/userscript/dist/itch-jam-gallery.user.js",
 		),
 	},
 	resources: {
@@ -25,7 +25,7 @@ const metadata = metadataBlock({
 	},
 })
 
-const output = resolve(import.meta.dirname!, "../../dist/itch-jam-gallery.user.js")
+const output = resolve(import.meta.dirname!, "../../web/dist/itch-jam-gallery.user.js")
 
 const build = async () => {
 	const code = await bundleUserScript({ url: import.meta.resolve("./mod.ts"), metadata })

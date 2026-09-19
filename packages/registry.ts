@@ -4,6 +4,7 @@ import { userscriptPackage as esmSh } from "./esm.sh/build.ts"
 import { userscriptPackage as githubYouTubeThumbnail } from "./github-youtube-thumbnail/build.ts"
 import { userscriptPackage as isomorph } from "./isomorph/build.ts"
 import { userscriptPackage as itchJamGallery } from "./itch-jam-gallery/build.ts"
+import { userscriptPackage as roguelikeTag } from "./roguelike-tag/build.ts"
 import { userscriptPackage as youtubeSiSubtitles } from "./youtube-si-subtitles/build.ts"
 
 import type { UserscriptPackage } from "./types.ts"
@@ -15,6 +16,7 @@ export const userscriptPackages = [
 	githubYouTubeThumbnail,
 	isomorph,
 	itchJamGallery,
+	roguelikeTag,
 	youtubeSiSubtitles,
 ] as const satisfies readonly UserscriptPackage[]
 
