@@ -1,6 +1,7 @@
 import { userscriptPackage as dcinsideInfiniteScroll } from "./dcinside-infinite-scroll/build.ts"
 import { userscriptPackage as dcinsideOutlinkBypass } from "./dcinside-outlink-bypass/build.ts"
 import { userscriptPackage as esmSh } from "./esm.sh/build.ts"
+import { userscriptPackage as githubYouTubeThumbnail } from "./github-youtube-thumbnail/build.ts"
 import { userscriptPackage as isomorph } from "./isomorph/build.ts"
 import { userscriptPackage as itchJamGallery } from "./itch-jam-gallery/build.ts"
 import { userscriptPackage as youtubeSiSubtitles } from "./youtube-si-subtitles/build.ts"
@@ -11,6 +12,7 @@ export const userscriptPackages = [
 	dcinsideInfiniteScroll,
 	dcinsideOutlinkBypass,
 	esmSh,
+	githubYouTubeThumbnail,
 	isomorph,
 	itchJamGallery,
 	youtubeSiSubtitles,
