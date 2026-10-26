@@ -1,16 +1,30 @@
 import { compilePattern, type Cue, findWarnings, parseCaptions } from "./captions.ts"
+import { findPeak, type Peak, videoIdOf } from "./heatmap.ts"
 
 const patternKey = "youtube-timeline-marker:pattern"
 const containerId = "timeline-marker-markers"
 const cuesByTrack = new Map<string, Cue[]>()
+const peaks = new Map<string, Peak>()
 
 const trackKey = (url: URL) => {
 	const params = ["v", "lang", "tlang", "kind", "name"].map((key) => url.searchParams.get(key))
 	return params.join("|")
 }
 
+const storePeak = (data: unknown) => {
+	const videoId = videoIdOf(data) ?? new URLSearchParams(location.search).get("v")
+	const peak = findPeak(data)
+	if (videoId && peak) peaks.set(videoId, peak)
+}
+
 const store = (rawUrl: string, body: string) => {
 	const url = new URL(rawUrl, location.href)
+	if (url.pathname.endsWith("/youtubei/v1/next")) {
+		try {
+			storePeak(JSON.parse(body))
+		} catch { /* not JSON */ }
+		return
+	}
 	if (!url.pathname.endsWith("/api/timedtext")) return
 
 	const cues = parseCaptions(body)
@@ -56,24 +70,70 @@ const warningsOf = (videoId: string) => {
 	return findWarnings(cues, pattern())
 }
 
-const marker = (cue: Cue, duration: number) => {
+const marker = (
+	{ start, end, text, color, minWidth }: {
+		start: number
+		end: number
+		text: string
+		color: string
+		minWidth: number
+	},
+	duration: number,
+) => {
 	const element = document.createElement("div")
-	element.title = cue.text
+	element.title = text
 	element.style.cssText = [
 		"position:absolute",
 		"top:0",
 		"bottom:0",
-		"width:3px",
-		"margin-left:-1px",
-		"background:#ff3b30",
-		`left:${cue.start / duration * 100}%`,
+		`min-width:${minWidth}px`,
+		`background:${color}`,
+		`left:${start / duration * 100}%`,
+		`width:${(end - start) / duration * 100}%`,
 	].join(";")
 	return element
 }
 
+let initialDataRead = false
+
+const readInitialData = () => {
+	const data = (globalThis as { ytInitialData?: unknown }).ytInitialData
+	if (!data || initialDataRead) return
+	initialDataRead = true
+	storePeak(data)
+}
+
 let rendered = ""
 
+const buttonId = "timeline-marker-pattern"
+
+const editPattern = () => {
+	const input = prompt("정규식 (비우면 기본값)", pattern().source)
+	if (input === null) return
+
+	try {
+		input ? localStorage.setItem(patternKey, input) : localStorage.removeItem(patternKey)
+	} catch { /* storage unavailable */ }
+	rendered = ""
+	render()
+}
+
+const ensureButton = () => {
+	const controls = document.querySelector(".ytp-right-controls")
+	if (!controls || document.getElementById(buttonId)) return
+
+	const button = document.createElement("button")
+	button.id = buttonId
+	button.className = "ytp-button"
+	button.title = "타임라인 마커 정규식"
+	button.textContent = "/re/"
+	button.style.cssText = "color:#fff;font-size:13px;width:auto;padding:0 8px"
+	button.addEventListener("click", editPattern)
+	controls.prepend(button)
+}
+
 const render = () => {
+	ensureButton()
 	const bar = document.querySelector<HTMLElement>(".ytp-progress-bar")
 	const video = document.querySelector<HTMLVideoElement>("video.html5-main-video")
 	const videoId = new URLSearchParams(location.search).get("v")
@@ -82,18 +142,31 @@ const render = () => {
 	if (!bar || !video || !videoId || !Number.isFinite(video.duration)) return
 	if (document.querySelector(".html5-video-player.ad-showing")) return existing?.remove()
 
+	readInitialData()
 	const warnings = warningsOf(videoId)
-	const signature = `${videoId}|${video.duration}|${warnings.map((cue) => cue.start)}`
+	const peak = peaks.get(videoId)
+	const signature = `${videoId}|${video.duration}|${
+		warnings.map((cue) => cue.start)
+	}|${peak?.start}`
 	if (existing && signature === rendered) return
 
 	existing?.remove()
 	rendered = signature
-	if (!warnings.length) return
+	if (!warnings.length && !peak) return
 
 	const container = document.createElement("div")
 	container.id = containerId
 	container.style.cssText = "position:absolute;inset:0;pointer-events:none;z-index:40"
-	container.append(...warnings.map((cue) => marker(cue, video.duration)))
+	if (peak) {
+		container.append(
+			marker({ ...peak, text: "가장 많이 본 장면", color: "#ffcc00", minWidth: 3 }, video.duration),
+		)
+	}
+	container.append(
+		...warnings.map(({ start, text }) =>
+			marker({ start, end: start, text, color: "#ff3b30", minWidth: 3 }, video.duration)
+		),
+	)
 	bar.append(container)
 }
 
