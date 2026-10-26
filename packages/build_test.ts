@@ -9,6 +9,7 @@ const expectedScripts = {
 	isomorph: "1.0.1",
 	"itch-jam-gallery": "0.1.1",
 	roguelike_tag: "0.5.1",
+	"youtube-scare-timeline": "0.1.0",
 	"youtube-si-subtitles": "0.2.1",
 }
 
