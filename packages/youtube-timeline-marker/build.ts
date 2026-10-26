@@ -6,10 +6,11 @@ import type { UserscriptPackage } from "../types.ts"
 
 const metadata = metadataBlock({
 	entries: {
-		name: "YouTube scare warning timeline",
-		"name:ko": "YouTube 깜놀 경고 타임라인",
+		name: "YouTube timeline marker",
+		"name:ko": "YouTube 타임라인 마커",
 		namespace: "https://github.com/scarf005",
-		description: "mark subtitles matching a regex (jump scare warnings) on the YouTube timeline",
+		description:
+			"mark subtitles matching a regex (e.g. jump scare warnings) on the YouTube timeline",
 		"description:ko":
 			"정규식에 맞는 자막(깜놀 주의 등)의 위치를 YouTube 타임라인에 미리 표시합니다. 자막(CC)이 켜져 있어야 합니다.",
 		version: "0.1.0",
@@ -19,7 +20,7 @@ const metadata = metadataBlock({
 			"https://github.com/scarf005/userscript/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc",
 		),
 		downloadURL: new URL(
-			"https://scarf005.github.io/userscript/dist/youtube-scare-timeline.user.js",
+			"https://scarf005.github.io/userscript/dist/youtube-timeline-marker.user.js",
 		),
 	},
 	resources: {
@@ -27,7 +28,7 @@ const metadata = metadataBlock({
 	},
 })
 
-const output = resolve(import.meta.dirname!, "../../web/dist/youtube-scare-timeline.user.js")
+const output = resolve(import.meta.dirname!, "../../web/dist/youtube-timeline-marker.user.js")
 
 const build = async () => {
 	const code = await bundleUserScript({ url: import.meta.resolve("./mod.ts"), metadata })
@@ -36,7 +37,7 @@ const build = async () => {
 }
 
 export const userscriptPackage = {
-	id: "youtube-scare-timeline",
+	id: "youtube-timeline-marker",
 	buildFile: new URL(import.meta.url),
 	output,
 	build,

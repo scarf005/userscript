@@ -1,7 +1,7 @@
 import { compilePattern, type Cue, findWarnings, parseCaptions } from "./captions.ts"
 
-const patternKey = "youtube-scare-timeline:pattern"
-const containerId = "scare-timeline-markers"
+const patternKey = "youtube-timeline-marker:pattern"
+const containerId = "timeline-marker-markers"
 const cuesByTrack = new Map<string, Cue[]>()
 
 const trackKey = (url: URL) => {
@@ -97,10 +97,10 @@ const render = () => {
 	bar.append(container)
 }
 
-const state = globalThis as typeof globalThis & { __youtubeScareTimeline?: boolean }
+const state = globalThis as typeof globalThis & { __youtubeTimelineMarker?: boolean }
 
-if (!state.__youtubeScareTimeline) {
-	state.__youtubeScareTimeline = true
+if (!state.__youtubeTimelineMarker) {
+	state.__youtubeTimelineMarker = true
 	hookFetch()
 	hookXhr()
 	setInterval(render, 1000)

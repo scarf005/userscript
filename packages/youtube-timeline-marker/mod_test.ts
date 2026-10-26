@@ -45,7 +45,7 @@ Deno.test({
 			url: import.meta.resolve("./mod.ts"),
 			metadata: metadataBlock({
 				entries: {
-					name: "YouTube scare timeline test",
+					name: "YouTube timeline marker test",
 					description: "test description",
 					version: "0.1.0",
 					homepageURL: new URL("https://example.com/homepage"),
@@ -77,9 +77,9 @@ Deno.test({
 				await fetch("/api/timedtext?v=abc&lang=ko&fmt=json3")
 			})
 
-			await page.waitForSelector("#scare-timeline-markers > div", { timeout: 5000 })
+			await page.waitForSelector("#timeline-marker-markers > div", { timeout: 5000 })
 			const markers = await page.$$eval(
-				"#scare-timeline-markers > div",
+				"#timeline-marker-markers > div",
 				(elements) => elements.map((element) => (element as HTMLElement).style.left),
 			)
 			assertEquals(markers, ["30%", "60%"])
