@@ -136,3 +136,57 @@ Deno.test({
 		}
 	},
 })
+
+Deno.test({
+	name: "Playwright integration test: turns CC on to collect captions, then off again",
+	fn: async () => {
+		const userscriptCode = await bundleUserScript({
+			url: import.meta.resolve("./mod.ts"),
+			metadata: metadataBlock({
+				entries: {
+					name: "YouTube timeline marker test",
+					description: "test description",
+					version: "0.1.0",
+					homepageURL: new URL("https://example.com/homepage"),
+					supportURL: new URL("https://example.com/support"),
+					downloadURL: new URL("https://example.com/download"),
+				},
+				resources: { match: ["https://www.youtube.com/*"] },
+			}),
+		})
+
+		const browser = await chromium.launch({ headless: true })
+		try {
+			const page = await browser.newPage()
+			await page.route("https://www.youtube.com/**", (route) => {
+				const url = new URL(route.request().url())
+				return url.pathname === "/api/timedtext"
+					? route.fulfill({ contentType: "application/json", body: json3 })
+					: route.fulfill({
+						contentType: "text/html",
+						body:
+							`<div class="html5-video-player"><video class="html5-main-video"></video><button class="ytp-subtitles-button" aria-pressed="false"></button><div class="ytp-right-controls"></div><div class="ytp-progress-bar" style="position:relative;width:600px;height:5px"></div></div>`,
+					})
+			})
+			await page.addInitScript(userscriptCode)
+			await page.goto("https://www.youtube.com/watch?v=abc")
+			await page.evaluate(() => {
+				const video = document.querySelector("video")!
+				Object.defineProperty(video, "duration", { value: 100 })
+				const button = document.querySelector(".ytp-subtitles-button")!
+				button.addEventListener("click", () => {
+					const on = button.getAttribute("aria-pressed") !== "true"
+					button.setAttribute("aria-pressed", String(on))
+					if (on) fetch("/api/timedtext?v=abc&lang=ko&fmt=json3")
+				})
+			})
+
+			await page.waitForSelector("#timeline-marker-markers > div", { timeout: 5000 })
+			await page.waitForFunction(() =>
+				document.querySelector(".ytp-subtitles-button")!.getAttribute("aria-pressed") === "false"
+			)
+		} finally {
+			await browser.close()
+		}
+	},
+})

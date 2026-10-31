@@ -63,11 +63,33 @@ const pattern = () => {
 	}
 }
 
-const warningsOf = (videoId: string) => {
-	const cues = [...cuesByTrack].flatMap(([key, value]) =>
-		key.startsWith(`${videoId}|`) ? value : []
-	)
-	return findWarnings(cues, pattern())
+const cuesOf = (videoId: string) =>
+	[...cuesByTrack].flatMap(([key, value]) => key.startsWith(`${videoId}|`) ? value : [])
+
+const warningsOf = (videoId: string) => findWarnings(cuesOf(videoId), pattern())
+
+const collectTimeoutMs = 10_000
+const attempted = new Set<string>()
+let collecting: { videoId: string; since: number } | undefined
+
+const isCcOn = (button: HTMLElement) => button.getAttribute("aria-pressed") === "true"
+
+// Turns CC on for a video without cues, then off again once the captions arrive.
+const collectCaptions = (videoId: string) => {
+	const button = document.querySelector<HTMLElement>(".ytp-subtitles-button")
+	if (collecting) {
+		const done = collecting.videoId !== videoId || cuesOf(videoId).length > 0 ||
+			Date.now() - collecting.since > collectTimeoutMs
+		if (!done) return
+		collecting = undefined
+		if (button && isCcOn(button)) button.click()
+		return
+	}
+	if (!button || attempted.has(videoId) || cuesOf(videoId).length) return
+	attempted.add(videoId)
+	if (isCcOn(button) || button.style.display === "none") return
+	collecting = { videoId, since: Date.now() }
+	button.click()
 }
 
 const marker = (
@@ -143,6 +165,7 @@ const render = () => {
 	if (document.querySelector(".html5-video-player.ad-showing")) return existing?.remove()
 
 	readInitialData()
+	collectCaptions(videoId)
 	const warnings = warningsOf(videoId)
 	const peak = peaks.get(videoId)
 	const signature = `${videoId}|${video.duration}|${
