@@ -13,7 +13,7 @@ const metadata = metadataBlock({
 			"mark subtitles matching a regex (e.g. jump scare warnings) on the YouTube timeline",
 		"description:ko":
 			"가장 많이 본 장면과 정규식에 맞는 자막(깜놀 주의 등)의 위치를 YouTube 타임라인에 표시합니다. 자막 마커는 자막(CC)이 켜져 있어야 합니다.",
-		version: "0.1.0",
+		version: "0.2.0",
 		"run-at": "document-start",
 		homepageURL: new URL("https://github.com/scarf005/userscript"),
 		supportURL: new URL(

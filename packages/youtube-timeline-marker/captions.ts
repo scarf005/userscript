@@ -1,6 +1,6 @@
 export type Cue = { start: number; text: string }
 
-export const defaultPattern = "깜놀|깜짝\\s*놀|점프\\s*스케어|jump\\s*scare"
+export const defaultPattern = "주의|공포|깜놀|깜짝\s*놀|점프\s*스케어|jump\s*scare"
 
 const parseJson3 = (body: string): Cue[] => {
 	const { events = [] } = JSON.parse(body) as {
